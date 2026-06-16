@@ -714,129 +714,222 @@ const MODULES = [
     content: {
       concept: `
         <div class="concept-block">
-          <h3>Claude is an API, not just a chatbot</h3>
-          <p>Most people first encounter Claude at claude.ai &mdash; a polished chat interface. But that's just one surface. Under the hood, Claude is a large language model (LLM) made by Anthropic, accessible via API. That API is what powers everything: the CLI, MCP servers, autonomous agents, code editors, and the claude.ai UI itself.</p>
-          <div class="highlight-box"><strong>Key insight:</strong> claude.ai is a client. The Claude API is the product. When you learn Claude "properly," you're learning to use the API directly &mdash; which gives you 10× more power than the chat UI.</div>
+          <h3>Start here: what is Claude, really?</h3>
+          <p>You have probably used Claude at claude.ai &mdash; you type something, it responds. Simple enough. But that experience hides almost everything interesting about what Claude actually is. This first module tears back the curtain so that everything else in this course makes sense.</p>
+          <p>Claude is a <strong>large language model</strong> (LLM) built by a company called Anthropic. A large language model is a type of AI that has been trained on enormous amounts of text &mdash; books, websites, code, articles &mdash; and learned to understand and generate human language at a level that was impossible five years ago.</p>
+          <p>But here is the key thing most people miss: <strong>Claude is not a website. Claude is not an app. Claude is a model &mdash; a brain &mdash; that lives on Anthropic\'s servers and can be accessed through an API.</strong> The website claude.ai is just one window into that brain. Your phone could be a window. A code editor could be a window. Your own application could be a window. All of them use the same underlying Claude.</p>
+          <div class="highlight-box"><strong>Analogy:</strong> Think of Claude like electricity. The power station (Anthropic\'s servers running Claude) generates the power. The sockets in your wall (the API) are how you access it. Your lamp, your phone charger, your kettle &mdash; those are the applications built on top. claude.ai is just one lamp. This course teaches you how to wire things up yourself.</div>
+          <p>Why does this matter? Because when you understand Claude as an API rather than a chatbot, you stop being a passenger and start being a driver. You can automate tasks, build tools, connect Claude to your own data, run multiple Claudes working together &mdash; none of which is possible if you think of Claude as just a chat interface.</p>
+        </div>
+
+        <div class="concept-block">
+          <h3>Who made Claude, and why does that matter?</h3>
+          <p>Anthropic was founded in 2021 by Dario Amodei, Daniela Amodei, and several colleagues who had previously worked at OpenAI. They left to start a company specifically focused on AI safety &mdash; building AI systems that behave reliably, honestly, and helpfully even as they become more powerful.</p>
+          <p>This focus on safety shapes Claude in concrete ways that affect how you work with it every day:</p>
           <ul>
-            <li>Claude is created by Anthropic, an AI safety company founded in 2021</li>
-            <li>It uses a "Constitutional AI" training method that bakes in helpful, harmless, and honest behavior</li>
-            <li>The API accepts messages and returns structured responses</li>
-            <li>Claude has a context window &mdash; think of it as working memory &mdash; currently up to 200K tokens</li>
-            <li>Different model tiers exist: Haiku (fast/cheap), Sonnet (balanced), Opus (powerful)</li>
+            <li><strong>Constitutional AI:</strong> Claude was trained using a method Anthropic developed called Constitutional AI. Rather than relying purely on human feedback, Claude learned to evaluate its own responses against a set of principles &mdash; helpfulness, harmlessness, honesty. This makes Claude unusually consistent and trustworthy compared to models trained differently. When you give Claude a rule to follow, it actually follows it.</li>
+            <li><strong>Honest about uncertainty:</strong> Claude is designed to say "I don\'t know" rather than invent an answer. When you are using Claude for real work &mdash; writing code, analysing data, researching a topic &mdash; this matters enormously. A model that confidently makes things up is dangerous for professional use. Claude flags uncertainty rather than hiding it.</li>
+            <li><strong>Follows instructions carefully:</strong> Claude is trained to understand nuanced, detailed instructions. When you write a CLAUDE.md file (Module 3) or a system prompt, Claude actually reads and follows it precisely &mdash; not approximately. You can trust the guardrails you set.</li>
+            <li><strong>Long context window:</strong> Claude can hold up to 200,000 tokens in its working memory at once. That is roughly 150,000 words &mdash; the equivalent of a long novel. This means you can hand Claude an entire codebase, a full research paper, or months of business records and it can reason across all of it in a single pass.</li>
           </ul>
         </div>
+
         <div class="concept-block">
-          <h3>The Model Family</h3>
-          <p>As of mid-2026, the Claude model lineup works like this:</p>
-          <div class="terminal">
-            <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Model Lineup</span></div>
-            <div class="terminal-body">
-<span class="t-type">claude-haiku-4</span>     <span class="t-comment">→ Fastest, cheapest &mdash; great for quick tasks</span>
-<span class="t-type">claude-sonnet-4-6</span>  <span class="t-comment">→ Balanced power + speed &mdash; your daily driver</span>
-<span class="t-type">claude-opus-4</span>      <span class="t-comment">→ Most capable &mdash; complex reasoning tasks</span>
-            </div>
+          <h3>The three tiers: Haiku, Sonnet, Opus</h3>
+          <p>Claude does not come in one size. Anthropic offers three tiers, each making a different trade-off between speed, cost, and capability. Picking the right tier is a practical decision you will make constantly &mdash; the wrong choice wastes money or produces weak results on tasks that needed more power.</p>
+          <div class="highlight-box">
+            <strong>Claude Haiku &mdash; Fast and affordable.</strong> Responses come back in under a second. Haiku is ideal for tasks where speed matters more than depth: classifying a piece of text, generating a short summary, answering a simple factual question, or running as a worker inside a large automated pipeline where you are calling Claude thousands of times. Think of Haiku as a very capable specialist who works extremely fast on focused, well-defined tasks.<br><br>
+            <strong>Claude Sonnet &mdash; The everyday workhorse.</strong> Balances quality and speed well. For most real-world tasks &mdash; writing and reviewing code, analysing documents, drafting content, reasoning through a problem &mdash; Sonnet is the right choice. It is fast enough to feel responsive and capable enough to handle genuine complexity. This is what we use throughout this course.<br><br>
+            <strong>Claude Opus &mdash; Maximum intelligence.</strong> Slower and more expensive, but it reasons more carefully, handles more ambiguous situations, and produces higher quality output on genuinely complex tasks. Use Opus when you need the best possible result and are willing to wait slightly longer and pay a bit more. In multi-agent systems (Module 6), Opus often plays the "orchestrator" role &mdash; the one deciding strategy while Haiku workers execute.
           </div>
-          <p>For most of this course, we use <strong>Sonnet</strong> &mdash; it's the sweet spot for real-world work.</p>
+          <p>A practical rule: start with Sonnet for everything. If output quality is not good enough for a specific task, move up to Opus. If a task is simple and repetitive, move down to Haiku to save money. You can even mix tiers within a single workflow.</p>
         </div>
-        <div class="callout">
-          <div class="callout-icon">💡</div>
-          <div class="callout-text"><strong>Why does this matter?</strong> When you use Claude via CLI or MCP servers, you pick the model explicitly. Knowing which tier fits which task saves you money and improves output quality.</div>
-        </div>`,
+
+        <div class="concept-block">
+          <h3>The context window: Claude\'s working memory</h3>
+          <p>This is one of the most important concepts in the entire course, so read it carefully.</p>
+          <p>Every time you send a message to Claude, Claude does not "remember" previous conversations from its training or from sessions you had last week. Instead, it reads everything you send it in that single request &mdash; your question, any documents you attached, the full conversation history so far, any instructions you gave it &mdash; all at once, in one go. That entire package is called the <strong>context window</strong>.</p>
+          <p>Claude Sonnet\'s context window holds up to 200,000 tokens. A token is roughly three-quarters of a word in English. So 200,000 tokens is approximately 150,000 words &mdash; enough to include a 500-page novel, or an entire software project with dozens of files, or six months of customer emails, or a year\'s worth of business reports.</p>
+          <p>This is a genuinely extraordinary capability. Most human experts cannot hold 150,000 words actively in mind at once. Claude can &mdash; and it can reason across all of it consistently without losing track. This is why tasks like "read all 47 of these invoices and identify the ones where the vendor overcharged us" or "here is our entire codebase &mdash; find the security vulnerability" become straightforward with Claude.</p>
+          <div class="highlight-box"><strong>Critical to understand:</strong> The context window resets with every new conversation. Claude does not remember your name, your project, or what you discussed yesterday &mdash; unless you include that information in the new conversation. This is exactly why the CLAUDE.md file (Module 3) is so powerful: it automatically adds your project context to every session so you never have to repeat yourself.</div>
+        </div>
+      `,
+
       demo: `
         <div class="concept-block">
-          <h3>Your First API Call (Conceptually)</h3>
-          <p>Here's what's happening every time Claude responds to anything &mdash; whether it's claude.ai, Claude Code, or your own app:</p>
+          <h3>Following a message from your keyboard to Claude\'s response</h3>
+          <p>Let us trace exactly what happens, step by step, when you send Claude a message. Whether you are on claude.ai, using the CLI, or calling the API from your own code &mdash; the underlying mechanism is identical. Understanding it removes any mystery about how Claude works.</p>
         </div>
+
+        <div class="concept-block">
+          <h3>Step 1: Your input becomes a structured request</h3>
+          <p>When you type "Help me write a function to sort a list" and press Enter, that text does not go to Claude directly. It gets wrapped into a structured data object (JSON) and sent as a secure HTTPS request to Anthropic\'s servers at the address <code>api.anthropic.com/v1/messages</code>.</p>
+          <p>That request includes: your message, which Claude model to use, how long the response is allowed to be, any background instructions (called a "system prompt"), and the full conversation history so far. All of this travels together as one package.</p>
+        </div>
+
+        <div class="concept-block">
+          <h3>Step 2: Claude reads everything at once</h3>
+          <p>Claude does not read your message word by word and then start thinking. It processes the entire context window simultaneously &mdash; your message, the system prompt, the conversation history, any documents you attached &mdash; all at once. Then it computes the most appropriate response.</p>
+          <p>This is why Claude can refer back to something you mentioned three messages ago, or notice a contradiction between what you said at the start and what you are asking now. It can see all of it at the same time, like a person who has read an entire document rather than someone who is being read to one sentence at a time.</p>
+        </div>
+
+        <div class="concept-block">
+          <h3>Step 3: The response streams back to you</h3>
+          <p>Claude sends its response token by token &mdash; roughly word by word. This is why you see text appearing gradually rather than waiting for ten seconds and then receiving everything at once. Streaming means you start reading useful content within a fraction of a second, and for long responses it feels much more natural and interactive.</p>
+        </div>
+
         <div class="diagram-wrap">
-          <div class="diagram-title">How Every Claude Interaction Works</div>
+          <div class="diagram-title">One complete Claude interaction &mdash; the full cycle</div>
           <div class="flow-row">
-            <div class="flow-box">Your Input (prompt)</div>
+            <div class="flow-box">You type a message</div>
             <div class="flow-arrow">→</div>
-            <div class="flow-box highlight">Anthropic API /v1/messages</div>
+            <div class="flow-box highlight">Packaged as JSON</div>
             <div class="flow-arrow">→</div>
-            <div class="flow-box">Model: claude-sonnet-4-6</div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-box success-box">Response (text / tools)</div>
+            <div class="flow-box highlight">HTTPS POST to api.anthropic.com</div>
+          </div>
+          <div class="flow-row" style="margin-top:12px">
+            <div class="flow-box">You read the answer</div>
+            <div class="flow-arrow">←</div>
+            <div class="flow-box highlight">Streamed back token by token</div>
+            <div class="flow-arrow">←</div>
+            <div class="flow-box success-box">Claude reads full context, generates response</div>
           </div>
         </div>
-        <div class="terminal">
-          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Raw API Call &mdash; What claude.ai does behind the scenes</span></div>
-          <div class="terminal-body">
-<span class="t-comment"># This is what every Claude interaction looks like under the hood:</span>
-<span class="t-out">POST</span> <span class="t-string">https://api.anthropic.com/v1/messages</span>
 
+        <div class="concept-block">
+          <h3>What the actual request looks like</h3>
+          <p>Here is what claude.ai sends to Anthropic\'s servers every time you chat. This is not secret or special &mdash; it is a standard HTTPS request, exactly the kind that any web application makes. Once you see this, you realise you can do the same thing yourself from any programming language or tool. The API is open to anyone with an API key.</p>
+        </div>
+
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">What claude.ai actually sends to Anthropic\'s servers</span></div>
+          <div class="terminal-body">
+<span class="t-comment"># Every message you send on claude.ai triggers a request like this</span>
+<span class="t-out">POST https://api.anthropic.com/v1/messages</span>
+
+<span class="t-comment"># These headers identify you and tell the server what format you are sending</span>
+<span class="t-flag">Authorization: Bearer sk-ant-api03-yourkey...</span>
+<span class="t-flag">Content-Type: application/json</span>
+<span class="t-flag">anthropic-version: 2023-06-01</span>
+
+<span class="t-comment"># The request body contains everything Claude needs</span>
 <span class="t-type">{</span>
   <span class="t-flag">"model"</span>: <span class="t-string">"claude-sonnet-4-6"</span>,
-  <span class="t-flag">"max_tokens"</span>: 1024,
+  <span class="t-flag">"max_tokens"</span>: 4096,
+  <span class="t-flag">"system"</span>: <span class="t-string">"You are a helpful assistant..."</span>,
   <span class="t-flag">"messages"</span>: [
-    {
-      <span class="t-flag">"role"</span>: <span class="t-string">"user"</span>,
-      <span class="t-flag">"content"</span>: <span class="t-string">"Hello, Claude!"</span>
-    }
+    { <span class="t-flag">"role"</span>: <span class="t-string">"user"</span>, <span class="t-flag">"content"</span>: <span class="t-string">"Help me sort a list in Python"</span> }
   ]
 <span class="t-type">}</span>
 
-<span class="t-comment"># Claude returns:</span>
+<span class="t-comment"># Claude streams back a response like this, piece by piece</span>
 <span class="t-type">{</span>
-  <span class="t-flag">"content"</span>: [{ <span class="t-flag">"type"</span>: <span class="t-string">"text"</span>, <span class="t-flag">"text"</span>: <span class="t-string">"Hello! How can I help?"</span> }]
+  <span class="t-flag">"content"</span>: [{
+    <span class="t-flag">"type"</span>: <span class="t-string">"text"</span>,
+    <span class="t-flag">"text"</span>: <span class="t-string">"Here is how to sort a list in Python:\n\nsorted_list = sorted(my_list)\n\nThis creates a new sorted list..."</span>
+  }],
+  <span class="t-flag">"usage"</span>: {
+    <span class="t-flag">"input_tokens"</span>: 52,
+    <span class="t-flag">"output_tokens"</span>: 143
+  }
 <span class="t-type">}</span>
           </div>
         </div>
+
         <div class="concept-block">
-          <h3>The Three Things Claude Can Return</h3>
+          <h3>Three types of response Claude can give</h3>
+          <p>As you progress through this course you will use all three. Understanding the difference now means you will immediately recognise what is happening in later modules when you encounter each one.</p>
           <ul>
-            <li><strong>Text</strong> &mdash; Plain language responses, explanations, code</li>
-            <li><strong>Tool calls</strong> &mdash; Structured requests to use external tools (like "search the web", "write a file")</li>
-            <li><strong>Documents/Images</strong> &mdash; When processing files you send it</li>
+            <li><strong>Text responses</strong> are the most familiar. Plain language &mdash; answers, explanations, code, essays, summaries. Everything you see in a normal conversation on claude.ai is a text response. It is Claude communicating directly with you in human language.</li>
+            <li><strong>Tool calls</strong> are how Claude takes action in the world. Instead of (or alongside) writing text, Claude outputs a structured request: "Please run a web search for X", "Please write this content to a file", "Please query this database". Your application then executes that action and sends the result back to Claude, which uses it to continue the task. This is the foundation of MCP servers (Module 5) and the agent loop (Module 4).</li>
+            <li><strong>Structured data</strong> is what you use when Claude is one step in a larger automated pipeline. You tell Claude: "Return a JSON object with these exact fields." Claude fills in the values reliably. Your code parses the JSON and does something with it &mdash; imports it into a database, triggers another process, displays it in a dashboard. No human reading required.</li>
           </ul>
-          <p>Everything you'll learn in this course builds on this simple foundation: send messages, get responses, act on them.</p>
-        </div>`,
-      exercise: `
-        <div class="exercise-area">
-          <div class="exercise-header">
-            <div class="exercise-number">1</div>
-            <div class="exercise-title">Check Your Understanding</div>
+          <div class="callout">
+            <div class="callout-icon">💡</div>
+            <div class="callout-text"><strong>A helpful way to think about it:</strong> Text is Claude talking to you. Tool calls are Claude asking your system to do something on its behalf. Structured data is Claude handing you a completed form. By the end of this course, you will routinely use all three in the same workflow.</div>
           </div>
+        </div>
+      `,
+
+      exercise: `
+        <div class="concept-block">
+          <h3>About these exercises</h3>
+          <p>These are not tests with right or wrong answers to be marked. They are designed to help you consolidate the concepts by expressing them in your own words and applying them to real situations. The act of writing an answer &mdash; even an imperfect one &mdash; does more for your understanding than reading the same paragraph again.</p>
+          <p>Take your time. Write in full sentences. If something is unclear, go back and re-read the relevant section before answering.</p>
+        </div>
+
+        <div class="exercise-area">
+          <div class="exercise-header"><div class="exercise-number">1</div><div class="exercise-title">The electricity analogy in your own words</div></div>
           <div class="exercise-body">
-            <div class="exercise-prompt">What are the three main model tiers Claude offers? Type them in order from fastest to most capable. (Haiku / Sonnet / Opus)</div>
-            <textarea class="exercise-input" id="ex-intro-1" placeholder="Type your answer here..."></textarea>
+            <div class="exercise-prompt">The lesson compared Claude to electricity, where Anthropic is the power station, the API is the socket in the wall, and applications are the devices you plug in. claude.ai is "just one lamp."<br><br>In your own words, explain this analogy. Then name two specific applications or tools that you would want to build or use that would "plug in" to Claude via the API. Try to think of examples relevant to your own work or daily life &mdash; not generic examples.</div>
+            <textarea class="exercise-input" id="ex-intro-1" placeholder="The analogy means...&#10;&#10;Application 1 I would build or use: ...&#10;Why it needs the API rather than just claude.ai: ...&#10;&#10;Application 2: ...&#10;Why: ..." style="min-height:180px"></textarea>
             <div class="exercise-actions">
-              <button class="btn-primary" onclick="checkExercise('intro', 1)">Check Answer</button>
-              <button class="btn-secondary" onclick="showHint('intro', 1)">Hint</button>
+              <button class="btn-primary" onclick="checkExercise('intro', 1)">Submit answer</button>
             </div>
             <div class="exercise-result" id="ex-result-intro-1"></div>
           </div>
         </div>
+
         <div class="exercise-area" style="margin-top:16px">
-          <div class="exercise-header">
-            <div class="exercise-number">2</div>
-            <div class="exercise-title">Reflection Exercise</div>
-          </div>
+          <div class="exercise-header"><div class="exercise-number">2</div><div class="exercise-title">Choosing the right model tier</div></div>
           <div class="exercise-body">
-            <div class="exercise-prompt">In your own words: what is the difference between claude.ai (the website) and the Claude API? Why does it matter for developers?</div>
-            <textarea class="exercise-input" id="ex-intro-2" placeholder="Type your answer here..."></textarea>
+            <div class="exercise-prompt">You are building a system that processes 10,000 customer support emails every day. Each email needs to be put into one of five categories: billing question, technical issue, complaint, compliment, or other. That is the only task &mdash; categorise the email, nothing else.<br><br>Which Claude model would you choose: Haiku, Sonnet, or Opus? Explain your reasoning carefully. Then explain what would go wrong if you chose the model one step higher, and what would go wrong if you chose the model one step lower.</div>
+            <textarea class="exercise-input" id="ex-intro-2" placeholder="I would choose: ...&#10;&#10;Reasoning: ...&#10;&#10;If I chose one model higher (...), the problem would be: ...&#10;&#10;If I chose one model lower (...), the problem would be: ..." style="min-height:180px"></textarea>
             <div class="exercise-actions">
-              <button class="btn-primary" onclick="checkExercise('intro', 2)">Submit</button>
+              <button class="btn-primary" onclick="checkExercise('intro', 2)">Submit answer</button>
+              <button class="btn-secondary" onclick="showHint('intro', 2)">Hint</button>
             </div>
             <div class="exercise-result" id="ex-result-intro-2"></div>
           </div>
-        </div>`,
-      quiz: `
-        <div id="quiz-intro"></div>`,
+        </div>
+
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">3</div><div class="exercise-title">Context window scenarios</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">Claude\'s context window holds approximately 150,000 words in a single conversation. Describe three specific, real tasks where this changes what is possible &mdash; tasks that would be very difficult or completely impossible without a context window this large. For each one, explain precisely why the size matters.<br><br>Do not use the examples from the lesson. Think of your own.</div>
+            <textarea class="exercise-input" id="ex-intro-3" placeholder="Task 1: ...&#10;Why 150,000 words matters for this: ...&#10;&#10;Task 2: ...&#10;Why: ...&#10;&#10;Task 3: ...&#10;Why: ..." style="min-height:200px"></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('intro', 3)">Submit answer</button>
+            </div>
+            <div class="exercise-result" id="ex-result-intro-3"></div>
+          </div>
+        </div>
+
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">4</div><div class="exercise-title">Text, tool call, or structured data?</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">For each scenario below, identify whether Claude should ideally return a text response, a tool call, or structured data &mdash; and explain why that type fits the situation best.<br><br>
+            <strong>A.</strong> A student asks Claude to explain how gravity works.<br>
+            <strong>B.</strong> An application needs Claude to check whether a website is currently online.<br>
+            <strong>C.</strong> A developer wants Claude to extract the name, email, phone number, and company from 200 business cards that have been photographed and need to be imported into a CRM system.<br>
+            <strong>D.</strong> A user asks Claude to book a restaurant table for Friday at 7pm.</div>
+            <textarea class="exercise-input" id="ex-intro-4" placeholder="A: ... because ...&#10;B: ... because ...&#10;C: ... because ...&#10;D: ... because ..." style="min-height:160px"></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('intro', 4)">Submit answer</button>
+              <button class="btn-secondary" onclick="showHint('intro', 4)">Hint</button>
+            </div>
+            <div class="exercise-result" id="ex-result-intro-4"></div>
+          </div>
+        </div>
+      `,
+
+      quiz: `<div id="quiz-intro"></div>`,
+
       complete: `
         <div class="completion-card">
           <span class="completion-icon">🎓</span>
-          <div class="completion-title">Foundation Complete!</div>
+          <div class="completion-title">Module 1 complete!</div>
           <div class="completion-xp">⚡ +50 XP Earned</div>
           <div class="key-learnings">
-            <h4>Key Learnings</h4>
-            <div class="key-item">Claude is an API, not just a chatbot &mdash; claude.ai is a client that uses it</div>
-            <div class="key-item">Three model tiers: Haiku (fast) → Sonnet (balanced) → Opus (powerful)</div>
-            <div class="key-item">Every Claude interaction is a /v1/messages API call under the hood</div>
-            <div class="key-item">Responses can be text, tool calls, or processed documents</div>
-            <div class="key-item">Context window = Claude's working memory &mdash; up to 200K tokens</div>
+            <h4>What you now understand</h4>
+            <div class="key-item">Claude is not a website — it is a large language model accessible through an API. claude.ai is just one application built on top of it. The API is open to anyone, and this course teaches you to use it directly.</div>
+            <div class="key-item">Anthropic\'s focus on AI safety produces concrete, practical benefits: Claude follows instructions reliably, is honest about what it does not know, and behaves consistently &mdash; making it trustworthy for professional and automated use.</div>
+            <div class="key-item">Three tiers exist: Haiku (fast, cheap, great for high-volume repetitive tasks), Sonnet (everyday workhorse, used throughout this course), Opus (maximum reasoning power for complex decisions). Mix them within a single workflow.</div>
+            <div class="key-item">The context window (200,000 tokens &asymp; 150,000 words) is Claude\'s working memory for one conversation. It resets between sessions. This is why CLAUDE.md files (Module 3) are so powerful &mdash; they fill the context automatically every time.</div>
+            <div class="key-item">Every Claude interaction is an HTTPS request to api.anthropic.com. Claude reads the full context at once and streams a response back. Three response types exist: text (communication), tool calls (action), structured data (pipeline output).</div>
           </div>
-          <button class="next-btn" onclick="goToModule('cli')">Next: Claude CLI →</button>
+          <p style="color:var(--text-muted);font-size:15px;margin:18px 0 26px;line-height:1.8">In Module 2, you will install Claude Code &mdash; the official command-line interface that runs Claude directly in your terminal, with access to your file system, your code, and your entire development environment. This is where things get hands-on.</p>
+          <button class="next-btn" onclick="goToModule(\'cli\')">Next: Claude CLI →</button>
         </div>`
     },
     quiz: [
