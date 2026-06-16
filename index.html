@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Mastery — Learn Claude From Zero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-void: #080C14;
+  --bg-surface: #0D1421;
+  --bg-elevated: #131D2E;
+  --bg-hover: #1A2640;
+  --accent-claude: #CC785C;
+  --accent-glow: #7C3AED;
+  --accent-glow-light: #9D5CF6;
+  --text-primary: #E8EFF8;
+  --text-muted: #6B7FA3;
+  --text-dim: #3D5270;
+  --success: #22D3A5;
+  --warning: #F59E0B;
+  --border: #1E2D45;
+  --border-bright: #2A3F60;
+  --terminal-green: #4ADE80;
+  --terminal-bg: #050A10;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-void);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+
+/* ── AUTH SCREEN ── */
+#auth-screen {
+  position: fixed; inset: 0;
+  background: var(--bg-void);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  flex-direction: column;
+  gap: 0;
+}
+.auth-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bright);
+  border-radius: 20px;
+  padding: 48px;
+  width: 420px;
+  position: relative;
+  overflow: hidden;
+}
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+.auth-logo {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+}
+.auth-logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent-claude), var(--accent-glow));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.auth-logo-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.auth-logo-text span { color: var(--accent-claude); }
+.auth-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.auth-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+.auth-input-group { margin-bottom: 16px; }
+.auth-input-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.auth-input {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.auth-input:focus { border-color: var(--accent-glow); }
+.auth-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent-glow), var(--accent-claude));
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.auth-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.auth-switch a { color: var(--accent-glow-light); cursor: pointer; text-decoration: none; }
+.auth-error {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #FC8181;
+  margin-bottom: 12px;
+  display: none;
+}
+
+/* ── MAIN APP ── */
+#app { display: none; min-height: 100vh; flex-direction: column; }
+#app.visible { display: flex; }
+
+/* ── TOP BAR ── */
+.topbar {
+  height: 60px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky; top: 0; z-index: 100;
+  flex-shrink: 0;
+}
+.topbar-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.topbar-logo .dot { 
+  width: 8px; height: 8px;
+  background: var(--accent-claude);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.topbar-spacer { flex: 1; }
+.xp-bar-wrap {
+  display: flex; align-items: center; gap: 10px;
+}
+.xp-label {
+  font-size: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  color: var(--accent-glow-light);
+}
+.xp-track {
+  width: 160px; height: 6px;
+  background: var(--border);
+  border-radius: 3px; overflow: hidden;
+}
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-glow), var(--accent-claude));
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.xp-num {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 60px;
+}
+.user-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px 6px 8px;
+  cursor: pointer;
+}
+.user-avatar {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-glow), var(--accent-claude));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+.user-name { font-size: 13px; font-weight: 500; }
+.logout-btn {
+  background: none; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 13px; padding: 4px 8px;
+  border-radius: 6px; transition: color 0.2s;
+}
+.logout-btn:hover { color: var(--text-primary); }
+
+/* ── LAYOUT ── */
+.app-body { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 60px); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 280px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding: 20px 0;
+}
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  padding: 0 20px;
+  margin: 16px 0 8px;
+}
+.module-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+}
+.module-item:hover { background: var(--bg-hover); }
+.module-item.active {
+  background: var(--bg-hover);
+}
+.module-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--accent-glow), var(--accent-claude));
+  border-radius: 0 2px 2px 0;
+}
+.module-progress-ring {
+  width: 36px; height: 36px;
+  flex-shrink: 0;
+  position: relative;
+}
+.module-progress-ring svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: var(--border); stroke-width: 3; }
+.ring-fill { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+.ring-icon {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.module-info { flex: 1; min-width: 0; }
+.module-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.module-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.module-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+.module-badge.done {
+  background: rgba(34,211,165,0.1);
+  color: var(--success);
+  border-color: rgba(34,211,165,0.3);
+}
+.module-badge.active {
+  background: rgba(124,58,237,0.15);
+  color: var(--accent-glow-light);
+  border-color: rgba(124,58,237,0.4);
+}
+
+/* ── MAIN CONTENT ── */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── LESSON AREA ── */
+.lesson-header {
+  padding: 32px 40px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+.lesson-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-glow-light);
+  margin-bottom: 10px;
+}
+.lesson-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.lesson-desc {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 620px;
+}
+.lesson-tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  padding: 0 40px;
+  flex-shrink: 0;
+}
+.lesson-tab {
+  padding: 14px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.lesson-tab:hover { color: var(--text-primary); }
+.lesson-tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-glow);
+}
+.lesson-body { padding: 32px 40px; flex: 1; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── CONTENT ELEMENTS ── */
+.concept-block {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.concept-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-glow), var(--accent-claude));
+}
+.concept-block h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+.concept-block p {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+.concept-block p:last-child { margin-bottom: 0; }
+.concept-block ul {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 12px;
+}
+.concept-block li {
+  display: flex; align-items: flex-start; gap: 10px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.concept-block li::before {
+  content: '▸';
+  color: var(--accent-claude);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.highlight-box {
+  background: rgba(124,58,237,0.08);
+  border: 1px solid rgba(124,58,237,0.25);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+.highlight-box strong { color: var(--accent-glow-light); }
+.callout {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: rgba(34,211,165,0.06);
+  border: 1px solid rgba(34,211,165,0.2);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.callout-text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+.callout-text strong { color: var(--success); }
+
+/* ── TERMINAL ── */
+.terminal {
+  background: var(--terminal-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 20px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+.terminal-bar {
+  background: var(--bg-elevated);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.terminal-dots {
+  display: flex; gap: 6px;
+}
+.terminal-dots span {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.td-r { background: #FF5F57; }
+.td-y { background: #FFBD2E; }
+.td-g { background: #28CA42; }
+.terminal-title {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-left: 8px;
+}
+.terminal-body {
+  padding: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  min-height: 100px;
+}
+.t-prompt { color: var(--text-muted); }
+.t-cmd { color: var(--text-primary); }
+.t-comment { color: var(--text-dim); font-style: italic; }
+.t-out { color: var(--terminal-green); }
+.t-err { color: #FC8181; }
+.t-flag { color: var(--accent-claude); }
+.t-string { color: #FCD34D; }
+.t-type { color: var(--accent-glow-light); }
+.t-cursor {
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--terminal-green);
+  animation: blink 1s step-end infinite;
+  vertical-align: middle;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── CODE BLOCKS ── */
+.code-block {
+  background: var(--terminal-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-x: auto;
+  margin: 16px 0;
+  position: relative;
+}
+.code-label {
+  position: absolute;
+  top: 10px; right: 14px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+.copy-btn {
+  position: absolute;
+  top: 8px; right: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.copy-btn:hover { color: var(--text-primary); border-color: var(--border-bright); }
+
+/* ── EXERCISE ── */
+.exercise-area {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bright);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+.exercise-header {
+  background: var(--bg-elevated);
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.exercise-number {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--accent-glow), var(--accent-claude));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.exercise-title {
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.exercise-body { padding: 24px; }
+.exercise-prompt {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.exercise-input {
+  width: 100%;
+  background: var(--terminal-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: var(--terminal-green);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s;
+}
+.exercise-input:focus { border-color: var(--accent-glow); }
+.exercise-input::placeholder { color: var(--text-dim); }
+.exercise-actions {
+  display: flex; gap: 10px; margin-top: 12px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-glow), var(--accent-claude));
+  border: none; border-radius: 8px;
+  padding: 10px 20px;
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-secondary {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { color: var(--text-primary); border-color: var(--border-bright); }
+.exercise-result {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  display: none;
+}
+.exercise-result.success {
+  background: rgba(34,211,165,0.08);
+  border: 1px solid rgba(34,211,165,0.3);
+  color: var(--success);
+  display: block;
+}
+.exercise-result.hint {
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.3);
+  color: var(--warning);
+  display: block;
+}
+
+/* ── QUIZ ── */
+.quiz-question {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.quiz-options {
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 20px;
+}
+.quiz-option {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.2s;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.quiz-option:hover { border-color: var(--border-bright); background: var(--bg-hover); }
+.quiz-option.correct {
+  border-color: var(--success);
+  background: rgba(34,211,165,0.08);
+  color: var(--success);
+}
+.quiz-option.wrong {
+  border-color: #FC8181;
+  background: rgba(252,129,129,0.08);
+  color: #FC8181;
+}
+.quiz-opt-letter {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  border: 1px solid var(--border-bright);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  flex-shrink: 0;
+}
+.quiz-feedback {
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.7;
+  display: none;
+}
+.quiz-score {
+  text-align: center;
+  padding: 32px;
+}
+.quiz-score-num {
+  font-size: 72px;
+  font-weight: 800;
+  font-family: 'Space Grotesk', sans-serif;
+  background: linear-gradient(135deg, var(--accent-glow), var(--accent-claude));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.quiz-score-label { color: var(--text-muted); font-size: 16px; margin-top: 4px; }
+
+/* ── COMPLETION ── */
+.completion-card {
+  text-align: center;
+  padding: 48px 32px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-bright);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.completion-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.completion-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  display: block;
+  animation: pop 0.5s ease;
+}
+@keyframes pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.completion-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+.completion-xp {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.4);
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--accent-glow-light);
+  margin: 16px 0 24px;
+}
+.key-learnings {
+  text-align: left;
+  background: var(--bg-elevated);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 20px 0;
+}
+.key-learnings h4 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.key-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.key-item:last-child { border-bottom: none; }
+.key-item::before { content: '✓'; color: var(--success); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.next-btn {
+  background: linear-gradient(135deg, var(--accent-glow), var(--accent-claude));
+  border: none; border-radius: 12px;
+  padding: 14px 32px;
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+.next-btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+
+/* ── DIAGRAM ── */
+.diagram-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+.diagram-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.flow-row {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.flow-box {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.flow-box.highlight {
+  background: rgba(124,58,237,0.15);
+  border-color: rgba(124,58,237,0.5);
+  color: var(--accent-glow-light);
+}
+.flow-box.success-box {
+  background: rgba(34,211,165,0.1);
+  border-color: rgba(34,211,165,0.4);
+  color: var(--success);
+}
+.flow-arrow { color: var(--text-dim); font-size: 16px; }
+
+/* ── PROGRESS STATS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 16px 40px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+.stat-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text-primary);
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── TYPING ANIMATION ── */
+.typing-text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-bright);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 14px;
+  z-index: 9999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  max-width: 320px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { font-size: 20px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .sidebar { width: 220px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .lesson-body { padding: 20px; }
+  .lesson-header { padding: 20px; }
+  .lesson-tabs { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🤖</div>
+      <div class="auth-logo-text">Claude<span>Mastery</span></div>
+    </div>
+    <div id="auth-login-view">
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-subtitle">Sign in to continue your Claude learning journey and track your progress.</div>
+      <div id="auth-error" class="auth-error"></div>
+      <div class="auth-input-group">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="login-email" placeholder="you@example.com">
+      </div>
+      <div class="auth-input-group">
+        <label>Password</label>
+        <input class="auth-input" type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <button class="auth-btn" onclick="doLogin()">Sign In</button>
+      <div class="auth-switch">Don't have an account? <a onclick="showRegister()">Create one free →</a></div>
+    </div>
+    <div id="auth-register-view" style="display:none">
+      <div class="auth-title">Start learning</div>
+      <div class="auth-subtitle">Free forever. Create your account to track progress across all 7 modules.</div>
+      <div id="reg-error" class="auth-error"></div>
+      <div class="auth-input-group">
+        <label>Full Name</label>
+        <input class="auth-input" type="text" id="reg-name" placeholder="Your name">
+      </div>
+      <div class="auth-input-group">
+        <label>Email</label>
+        <input class="auth-input" type="email" id="reg-email" placeholder="you@example.com">
+      </div>
+      <div class="auth-input-group">
+        <label>Password</label>
+        <input class="auth-input" type="password" id="reg-pass" placeholder="Min 6 characters">
+      </div>
+      <button class="auth-btn" onclick="doRegister()">Create Free Account</button>
+      <div class="auth-switch">Already have an account? <a onclick="showLogin()">Sign in →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="dot"></div>
+      Claude<span style="color:var(--accent-claude)">Mastery</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="xp-bar-wrap">
+      <span class="xp-label">XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-num" id="xp-num">0 / 700</span>
+    </div>
+    <div class="user-chip">
+      <div class="user-avatar" id="user-avatar">A</div>
+      <span class="user-name" id="user-name-display">User</span>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Sign out</button>
+  </div>
+
+  <div class="app-body">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section-label">Modules</div>
+      <div id="module-list"></div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content" id="main-content">
+      <!-- stats bar -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-completed">0</div>
+          <div class="stat-label">Modules Done</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-xp">0</div>
+          <div class="stat-label">XP Earned</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-exercises">0</div>
+          <div class="stat-label">Exercises Done</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-streak">0</div>
+          <div class="stat-label">Day Streak 🔥</div>
+        </div>
+      </div>
+      <!-- lesson content injected here -->
+      <div id="lesson-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">🎉</span>
+  <span id="toast-msg">Module complete!</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA LAYER (localStorage — swap for Supabase)
+// ══════════════════════════════════════════════
+const DB = {
+  getUsers: () => JSON.parse(localStorage.getItem('cm_users') || '{}'),
+  saveUsers: u => localStorage.setItem('cm_users', JSON.stringify(u)),
+  getSession: () => JSON.parse(localStorage.getItem('cm_session') || 'null'),
+  saveSession: s => localStorage.setItem('cm_session', JSON.stringify(s)),
+  clearSession: () => localStorage.removeItem('cm_session'),
+  getUserData: (email) => {
+    const users = DB.getUsers();
+    return users[email] || null;
+  },
+  saveUserData: (email, data) => {
+    const users = DB.getUsers();
+    users[email] = { ...users[email], ...data };
+    DB.saveUsers(users);
+  },
+  getProgress: (email) => {
+    const u = DB.getUserData(email);
+    return u ? (u.progress || {}) : {};
+  },
+  setProgress: (email, moduleId, data) => {
+    const u = DB.getUserData(email) || {};
+    if (!u.progress) u.progress = {};
+    u.progress[moduleId] = { ...u.progress[moduleId], ...data };
+    DB.saveUserData(email, u);
+  },
+  getStats: (email) => {
+    const u = DB.getUserData(email);
+    return u ? (u.stats || { xp: 0, exercises: 0, streak: 0, lastVisit: null }) : { xp: 0, exercises: 0, streak: 0, lastVisit: null };
+  },
+  addXP: (email, amount) => {
+    const u = DB.getUserData(email) || {};
+    if (!u.stats) u.stats = { xp: 0, exercises: 0, streak: 0 };
+    u.stats.xp = (u.stats.xp || 0) + amount;
+    DB.saveUserData(email, u);
+    return u.stats.xp;
+  },
+  addExercise: (email) => {
+    const u = DB.getUserData(email) || {};
+    if (!u.stats) u.stats = { xp: 0, exercises: 0, streak: 0 };
+    u.stats.exercises = (u.stats.exercises || 0) + 1;
+    DB.saveUserData(email, u);
+  },
+  updateStreak: (email) => {
+    const u = DB.getUserData(email) || {};
+    if (!u.stats) u.stats = { xp: 0, exercises: 0, streak: 0, lastVisit: null };
+    const today = new Date().toDateString();
+    const last = u.stats.lastVisit;
+    if (last !== today) {
+      const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+      u.stats.streak = (last === yesterday.toDateString()) ? (u.stats.streak || 0) + 1 : 1;
+      u.stats.lastVisit = today;
+    }
+    DB.saveUserData(email, u);
+    return u.stats.streak;
+  }
+};
+
+// ══════════════════════════════════════════════
+//  CURRICULUM
+// ══════════════════════════════════════════════
+const MODULES = [
+  {
+    id: 'intro',
+    icon: '🤖',
+    name: 'What is Claude?',
+    subtitle: 'Foundation · 5 min',
+    xp: 50,
+    color: '#CC785C',
+    eyebrow: 'Module 1 · Foundation',
+    title: 'Meet Claude',
+    desc: 'Before you touch a single command, you need to understand what Claude actually is — not the chatbot version you see on claude.ai, but the underlying model and API that powers everything else.',
+    tabs: ['Concept', 'Demo', 'Exercise', 'Quiz', 'Complete'],
+    content: {
+      concept: `
+        <div class="concept-block">
+          <h3>Claude is an API, not just a chatbot</h3>
+          <p>Most people first encounter Claude at claude.ai — a polished chat interface. But that's just one surface. Under the hood, Claude is a large language model (LLM) made by Anthropic, accessible via API. That API is what powers everything: the CLI, MCP servers, autonomous agents, code editors, and the claude.ai UI itself.</p>
+          <div class="highlight-box"><strong>Key insight:</strong> claude.ai is a client. The Claude API is the product. When you learn Claude "properly," you're learning to use the API directly — which gives you 10× more power than the chat UI.</div>
+          <ul>
+            <li>Claude is created by Anthropic, an AI safety company founded in 2021</li>
+            <li>It uses a "Constitutional AI" training method that bakes in helpful, harmless, and honest behavior</li>
+            <li>The API accepts messages and returns structured responses</li>
+            <li>Claude has a context window — think of it as working memory — currently up to 200K tokens</li>
+            <li>Different model tiers exist: Haiku (fast/cheap), Sonnet (balanced), Opus (powerful)</li>
+          </ul>
+        </div>
+        <div class="concept-block">
+          <h3>The Model Family</h3>
+          <p>As of mid-2026, the Claude model lineup works like this:</p>
+          <div class="terminal">
+            <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Model Lineup</span></div>
+            <div class="terminal-body">
+<span class="t-type">claude-haiku-4</span>     <span class="t-comment">→ Fastest, cheapest — great for quick tasks</span>
+<span class="t-type">claude-sonnet-4-6</span>  <span class="t-comment">→ Balanced power + speed — your daily driver</span>
+<span class="t-type">claude-opus-4</span>      <span class="t-comment">→ Most capable — complex reasoning tasks</span>
+            </div>
+          </div>
+          <p>For most of this course, we use <strong>Sonnet</strong> — it's the sweet spot for real-world work.</p>
+        </div>
+        <div class="callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text"><strong>Why does this matter?</strong> When you use Claude via CLI or MCP servers, you pick the model explicitly. Knowing which tier fits which task saves you money and improves output quality.</div>
+        </div>`,
+      demo: `
+        <div class="concept-block">
+          <h3>Your First API Call (Conceptually)</h3>
+          <p>Here's what's happening every time Claude responds to anything — whether it's claude.ai, Claude Code, or your own app:</p>
+        </div>
+        <div class="diagram-wrap">
+          <div class="diagram-title">How Every Claude Interaction Works</div>
+          <div class="flow-row">
+            <div class="flow-box">Your Input (prompt)</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box highlight">Anthropic API /v1/messages</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box">Model: claude-sonnet-4-6</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-box success-box">Response (text / tools)</div>
+          </div>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Raw API Call — What claude.ai does behind the scenes</span></div>
+          <div class="terminal-body">
+<span class="t-comment"># This is what every Claude interaction looks like under the hood:</span>
+<span class="t-out">POST</span> <span class="t-string">https://api.anthropic.com/v1/messages</span>
+
+<span class="t-type">{</span>
+  <span class="t-flag">"model"</span>: <span class="t-string">"claude-sonnet-4-6"</span>,
+  <span class="t-flag">"max_tokens"</span>: 1024,
+  <span class="t-flag">"messages"</span>: [
+    {
+      <span class="t-flag">"role"</span>: <span class="t-string">"user"</span>,
+      <span class="t-flag">"content"</span>: <span class="t-string">"Hello, Claude!"</span>
+    }
+  ]
+<span class="t-type">}</span>
+
+<span class="t-comment"># Claude returns:</span>
+<span class="t-type">{</span>
+  <span class="t-flag">"content"</span>: [{ <span class="t-flag">"type"</span>: <span class="t-string">"text"</span>, <span class="t-flag">"text"</span>: <span class="t-string">"Hello! How can I help?"</span> }]
+<span class="t-type">}</span>
+          </div>
+        </div>
+        <div class="concept-block">
+          <h3>The Three Things Claude Can Return</h3>
+          <ul>
+            <li><strong>Text</strong> — Plain language responses, explanations, code</li>
+            <li><strong>Tool calls</strong> — Structured requests to use external tools (like "search the web", "write a file")</li>
+            <li><strong>Documents/Images</strong> — When processing files you send it</li>
+          </ul>
+          <p>Everything you'll learn in this course builds on this simple foundation: send messages, get responses, act on them.</p>
+        </div>`,
+      exercise: `
+        <div class="exercise-area">
+          <div class="exercise-header">
+            <div class="exercise-number">1</div>
+            <div class="exercise-title">Check Your Understanding</div>
+          </div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">What are the three main model tiers Claude offers? Type them in order from fastest to most capable. (Haiku / Sonnet / Opus)</div>
+            <textarea class="exercise-input" id="ex-intro-1" placeholder="Type your answer here..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('intro', 1)">Check Answer</button>
+              <button class="btn-secondary" onclick="showHint('intro', 1)">Hint</button>
+            </div>
+            <div class="exercise-result" id="ex-result-intro-1"></div>
+          </div>
+        </div>
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header">
+            <div class="exercise-number">2</div>
+            <div class="exercise-title">Reflection Exercise</div>
+          </div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">In your own words: what is the difference between claude.ai (the website) and the Claude API? Why does it matter for developers?</div>
+            <textarea class="exercise-input" id="ex-intro-2" placeholder="Type your answer here..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('intro', 2)">Submit</button>
+            </div>
+            <div class="exercise-result" id="ex-result-intro-2"></div>
+          </div>
+        </div>`,
+      quiz: `
+        <div id="quiz-intro"></div>`,
+      complete: `
+        <div class="completion-card">
+          <span class="completion-icon">🎓</span>
+          <div class="completion-title">Foundation Complete!</div>
+          <div class="completion-xp">⚡ +50 XP Earned</div>
+          <div class="key-learnings">
+            <h4>Key Learnings</h4>
+            <div class="key-item">Claude is an API, not just a chatbot — claude.ai is a client that uses it</div>
+            <div class="key-item">Three model tiers: Haiku (fast) → Sonnet (balanced) → Opus (powerful)</div>
+            <div class="key-item">Every Claude interaction is a /v1/messages API call under the hood</div>
+            <div class="key-item">Responses can be text, tool calls, or processed documents</div>
+            <div class="key-item">Context window = Claude's working memory — up to 200K tokens</div>
+          </div>
+          <button class="next-btn" onclick="goToModule('cli')">Next: Claude CLI →</button>
+        </div>`
+    },
+    quiz: [
+      { q: 'What company makes Claude?', opts: ['OpenAI', 'Google', 'Anthropic', 'Meta'], correct: 2, exp: 'Claude is made by Anthropic, an AI safety company founded in 2021 by former OpenAI researchers.' },
+      { q: 'Which Claude model tier is the fastest and cheapest?', opts: ['Opus', 'Sonnet', 'Haiku', 'Titan'], correct: 2, exp: 'Haiku is the fastest and cheapest tier — ideal for quick, lightweight tasks.' },
+      { q: 'What does claude.ai represent in the Claude ecosystem?', opts: ['The underlying model', 'A client that uses the Claude API', 'An Anthropic server', 'A different AI entirely'], correct: 1, exp: 'claude.ai is just a client — a polished UI that calls the same Claude API you can access directly.' },
+    ]
+  },
+  {
+    id: 'cli',
+    icon: '⌨️',
+    name: 'Claude CLI',
+    subtitle: 'Setup · 15 min',
+    xp: 100,
+    color: '#7C3AED',
+    eyebrow: 'Module 2 · CLI',
+    title: 'Claude in Your Terminal',
+    desc: 'Claude Code is a command-line interface that brings Claude directly into your development workflow. You run it in your terminal, it reads your codebase, and it can execute code, write files, run tests — all autonomously.',
+    tabs: ['Concept', 'Install', 'Commands', 'Exercise', 'Quiz', 'Complete'],
+    content: {
+      concept: `
+        <div class="concept-block">
+          <h3>What is Claude Code (CLI)?</h3>
+          <p>Claude Code is Anthropic's official CLI tool. Unlike using claude.ai in a browser, the CLI runs <em>inside your terminal</em>, which means it has direct access to your file system, can run bash commands, read entire codebases, and act as an autonomous coding agent.</p>
+          <div class="highlight-box"><strong>Think of it this way:</strong> claude.ai is like talking to a consultant on the phone. Claude CLI is like having that consultant <em>sitting at your computer</em> — they can actually open files, run commands, and make changes.</div>
+          <ul>
+            <li>Reads your entire project directory for context</li>
+            <li>Executes shell commands, Python scripts, npm/pip installs</li>
+            <li>Creates, edits, and deletes files with your permission</li>
+            <li>Uses tools: bash, text editor, web fetch, and more</li>
+            <li>Supports "agentic" mode — runs tasks autonomously until complete</li>
+            <li>CLAUDE.md file gives it persistent context about your project</li>
+          </ul>
+        </div>
+        <div class="concept-block">
+          <h3>CLI vs claude.ai — When to Use Which</h3>
+          <div class="terminal">
+            <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Decision Matrix</span></div>
+            <div class="terminal-body">
+<span class="t-comment">Use claude.ai when:</span>
+<span class="t-out">  ✓</span> Casual Q&A, research, drafting text
+<span class="t-out">  ✓</span> Uploading images or PDFs to analyze
+<span class="t-out">  ✓</span> Quick one-off questions
+
+<span class="t-comment">Use Claude CLI (Claude Code) when:</span>
+<span class="t-out">  ✓</span> Working on a codebase
+<span class="t-out">  ✓</span> Need Claude to execute commands
+<span class="t-out">  ✓</span> Automating multi-step development tasks
+<span class="t-out">  ✓</span> Running autonomous agents
+<span class="t-out">  ✓</span> Using MCP servers
+            </div>
+          </div>
+        </div>`,
+      Install: `
+        <div class="concept-block">
+          <h3>Installing Claude Code</h3>
+          <p>Claude Code requires Node.js 18+ and an Anthropic API key. Here's the full setup:</p>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Installation Steps</span></div>
+          <div class="terminal-body">
+<span class="t-comment"># Step 1: Check Node.js version (need 18+)</span>
+<span class="t-prompt">$ </span><span class="t-cmd">node --version</span>
+<span class="t-out">v20.11.0</span>
+
+<span class="t-comment"># Step 2: Install Claude Code globally</span>
+<span class="t-prompt">$ </span><span class="t-cmd">npm install -g @anthropic-ai/claude-code</span>
+<span class="t-out">added 847 packages in 12s</span>
+
+<span class="t-comment"># Step 3: Set your API key</span>
+<span class="t-prompt">$ </span><span class="t-cmd">export ANTHROPIC_API_KEY=sk-ant-your-key-here</span>
+
+<span class="t-comment"># Step 4: (Optional) Add to your shell profile so it persists</span>
+<span class="t-prompt">$ </span><span class="t-cmd">echo 'export ANTHROPIC_API_KEY=sk-ant-...' >> ~/.zshrc</span>
+
+<span class="t-comment"># Step 5: Launch Claude Code in your project!</span>
+<span class="t-prompt">$ </span><span class="t-cmd">cd my-project && claude</span>
+<span class="t-out">✓ Claude Code v1.x.x</span>
+<span class="t-out">✓ Connected to claude-sonnet-4-6</span>
+<span class="t-out">✓ Reading project files...</span>
+<span class="t-cursor"></span>
+          </div>
+        </div>
+        <div class="callout">
+          <div class="callout-icon">🔑</div>
+          <div class="callout-text"><strong>Getting an API key:</strong> Go to console.anthropic.com → API Keys → Create Key. New accounts get free credits. The CLI uses your API credits (not a Claude Pro subscription).</div>
+        </div>
+        <div class="concept-block">
+          <h3>Verifying Your Setup</h3>
+          <div class="terminal">
+            <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Verify Install</span></div>
+            <div class="terminal-body">
+<span class="t-prompt">$ </span><span class="t-cmd">claude --version</span>
+<span class="t-out">claude-code/1.0.x</span>
+
+<span class="t-prompt">$ </span><span class="t-cmd">claude --help</span>
+<span class="t-out">Usage: claude [options] [prompt]</span>
+
+<span class="t-prompt">$ </span><span class="t-cmd">claude "What files are in this directory?"</span>
+<span class="t-out">I can see the following files:
+  - package.json
+  - src/index.js
+  - README.md
+...</span>
+            </div>
+          </div>
+        </div>`,
+      Commands: `
+        <div class="concept-block">
+          <h3>Essential Claude CLI Commands</h3>
+          <p>Claude Code has both interactive and non-interactive modes, plus slash commands you use while inside a session:</p>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">CLI Reference</span></div>
+          <div class="terminal-body">
+<span class="t-comment">── LAUNCH MODES ──────────────────────────</span>
+
+<span class="t-comment"># Interactive mode (REPL — most common)</span>
+<span class="t-prompt">$ </span><span class="t-cmd">claude</span>
+
+<span class="t-comment"># One-shot mode (run a task and exit)</span>
+<span class="t-prompt">$ </span><span class="t-cmd">claude "Fix all TypeScript errors in src/"</span>
+
+<span class="t-comment"># Plan mode (see what Claude WILL do before it does it)</span>
+<span class="t-prompt">$ </span><span class="t-cmd">claude --plan "Refactor the auth module"</span>
+
+<span class="t-comment"># Pipe input from another command</span>
+<span class="t-prompt">$ </span><span class="t-cmd">cat error.log | claude "What caused this error?"</span>
+
+<span class="t-comment">── INSIDE INTERACTIVE SESSION ────────────</span>
+
+<span class="t-type">/help</span>         <span class="t-comment">Show all slash commands</span>
+<span class="t-type">/clear</span>        <span class="t-comment">Clear conversation context</span>
+<span class="t-type">/compact</span>      <span class="t-comment">Summarize + compress long context</span>
+<span class="t-type">/model</span>        <span class="t-comment">Switch to different Claude model</span>
+<span class="t-type">/cost</span>         <span class="t-comment">See token usage and cost so far</span>
+<span class="t-type">/exit</span>         <span class="t-comment">End the session</span>
+
+<span class="t-comment">── FLAGS ──────────────────────────────────</span>
+
+<span class="t-flag">--model</span>       <span class="t-comment">Specify model: claude-sonnet-4-6</span>
+<span class="t-flag">--no-tools</span>    <span class="t-comment">Disable tool use (text only)</span>
+<span class="t-flag">--output-dir</span>  <span class="t-comment">Where to save generated files</span>
+<span class="t-flag">--verbose</span>     <span class="t-comment">Show full tool call details</span>
+          </div>
+        </div>
+        <div class="concept-block">
+          <h3>Real-World CLI Workflows</h3>
+          <div class="terminal">
+            <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Common Workflows</span></div>
+            <div class="terminal-body">
+<span class="t-comment"># Debug a test failure</span>
+<span class="t-prompt">$ </span><span class="t-cmd">npm test 2>&1 | claude "All tests failed. Fix them."</span>
+
+<span class="t-comment"># Code review</span>
+<span class="t-prompt">$ </span><span class="t-cmd">git diff main | claude "Review this PR for bugs and style issues"</span>
+
+<span class="t-comment"># Generate docs from code</span>
+<span class="t-prompt">$ </span><span class="t-cmd">claude "Read all .js files in src/ and generate a README.md"</span>
+
+<span class="t-comment"># Scaffold a new feature</span>
+<span class="t-prompt">$ </span><span class="t-cmd">claude "Add a /healthcheck endpoint to this Express app"</span>
+            </div>
+          </div>
+        </div>`,
+      exercise: `
+        <div class="exercise-area">
+          <div class="exercise-header"><div class="exercise-number">1</div><div class="exercise-title">Installation Command</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">What is the exact npm command to install Claude Code globally on your system?</div>
+            <textarea class="exercise-input" id="ex-cli-1" placeholder="npm install ..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('cli', 1)">Check</button>
+              <button class="btn-secondary" onclick="showHint('cli', 1)">Hint</button>
+            </div>
+            <div class="exercise-result" id="ex-result-cli-1"></div>
+          </div>
+        </div>
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">2</div><div class="exercise-title">Pipeline Command</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">Write the CLI command to pipe a file called "errors.log" into Claude and ask it to summarize the errors. Use unix pipe syntax.</div>
+            <textarea class="exercise-input" id="ex-cli-2" placeholder="cat ... | claude ..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('cli', 2)">Check</button>
+              <button class="btn-secondary" onclick="showHint('cli', 2)">Hint</button>
+            </div>
+            <div class="exercise-result" id="ex-result-cli-2"></div>
+          </div>
+        </div>
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">3</div><div class="exercise-title">Slash Command Recall</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">Inside a running Claude session, your context window is getting full and slowing responses. Which slash command should you use to fix this?</div>
+            <textarea class="exercise-input" id="ex-cli-3" placeholder="/..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('cli', 3)">Check</button>
+              <button class="btn-secondary" onclick="showHint('cli', 3)">Hint</button>
+            </div>
+            <div class="exercise-result" id="ex-result-cli-3"></div>
+          </div>
+        </div>`,
+      quiz: `<div id="quiz-cli"></div>`,
+      complete: `
+        <div class="completion-card">
+          <span class="completion-icon">⌨️</span>
+          <div class="completion-title">CLI Mastered!</div>
+          <div class="completion-xp">⚡ +100 XP Earned</div>
+          <div class="key-learnings">
+            <h4>Key Learnings</h4>
+            <div class="key-item">Claude CLI = Claude Code — install with npm install -g @anthropic-ai/claude-code</div>
+            <div class="key-item">Needs ANTHROPIC_API_KEY env var set — get it from console.anthropic.com</div>
+            <div class="key-item">Interactive mode (just run <code>claude</code>) vs one-shot mode (claude "your task")</div>
+            <div class="key-item">/compact is your friend when context fills up — it summarizes and compresses</div>
+            <div class="key-item">Pipe Unix commands into Claude with | for powerful automation patterns</div>
+          </div>
+          <button class="next-btn" onclick="goToModule('claudemd')">Next: CLAUDE.md →</button>
+        </div>`
+    },
+    quiz: [
+      { q: 'What Node.js version is required minimum for Claude Code?', opts: ['14+', '16+', '18+', '20+'], correct: 2, exp: 'Claude Code requires Node.js 18 or higher to run.' },
+      { q: 'Which slash command compresses a long conversation context?', opts: ['/shrink', '/compact', '/clear', '/reset'], correct: 1, exp: '/compact summarizes and compresses your conversation — useful when the context window gets large.' },
+      { q: 'How do you run Claude on a specific file without entering interactive mode?', opts: ['claude --file app.js', 'cat app.js | claude "your question"', 'claude read app.js', 'claude -f app.js'], correct: 1, exp: 'You pipe the file content using unix pipes: cat app.js | claude "your question here"' },
+    ]
+  },
+  {
+    id: 'claudemd',
+    icon: '📋',
+    name: 'CLAUDE.md',
+    subtitle: 'Context · 10 min',
+    xp: 100,
+    color: '#22D3A5',
+    eyebrow: 'Module 3 · Memory',
+    title: 'Persistent Project Context',
+    desc: 'CLAUDE.md is a special Markdown file that Claude reads automatically when it starts in your project directory. It gives Claude permanent memory of your codebase conventions, team rules, and project context — without you having to repeat it every session.',
+    tabs: ['Concept', 'Structure', 'Exercise', 'Quiz', 'Complete'],
+    content: {
+      concept: `
+        <div class="concept-block">
+          <h3>The Problem CLAUDE.md Solves</h3>
+          <p>Without CLAUDE.md, every time you start a Claude session you'd have to re-explain: "We use TypeScript. Our API is at /api/v2. Never use var. We use Tailwind not CSS modules. Tests go in __tests__/ ..." — tedious and easy to forget.</p>
+          <p>CLAUDE.md is Claude's long-term memory for your project. It's version-controlled with your code, shared with your team, and automatically loaded every single session.</p>
+          <div class="highlight-box"><strong>CLAUDE.md = Project constitution.</strong> It encodes every convention, constraint, and context point your team would otherwise repeat in every prompt.</div>
+          <ul>
+            <li>Auto-loaded by Claude Code when it starts in a directory</li>
+            <li>Supports nested CLAUDE.md files — one per subdirectory if needed</li>
+            <li>Version-controlled with your codebase (commit it!)</li>
+            <li>Works with system prompts — not a replacement, a complement</li>
+            <li>Can reference other files with @file syntax</li>
+          </ul>
+        </div>
+        <div class="callout">
+          <div class="callout-icon">⚡</div>
+          <div class="callout-text"><strong>Pro pattern from Ayaz's projects:</strong> On VenzAura Ops, a CLAUDE.md at the repo root includes the Supabase schema overview, naming conventions, and the rule "always use Row Level Security — never bypass it." Claude never gets this wrong now.</div>
+        </div>`,
+      Structure: `
+        <div class="concept-block">
+          <h3>Anatomy of a Great CLAUDE.md</h3>
+          <p>Here's a real-world example CLAUDE.md — notice how it's not just documentation, it's directive:</p>
+        </div>
+        <div class="code-block">
+          <span class="code-label">CLAUDE.md</span>
+<span class="t-type"># Project: VenzAura Ops Platform</span>
+
+<span class="t-type">## Stack</span>
+- Next.js 14 (App Router), TypeScript, Tailwind CSS
+- Supabase (PostgreSQL + RLS) for backend
+- Deployed on Netlify (site ID: d9ab76fe-...)
+- Shadcn/ui for components
+
+<span class="t-type">## Coding Rules</span>
+- NEVER use <span class="t-err">var</span> — only const/let
+- ALL database queries must go through Supabase client, never raw SQL
+- ALWAYS enable Row Level Security — never bypass with service role in client code
+- Components go in <span class="t-flag">src/components/</span>, pages in <span class="t-flag">src/app/</span>
+- Naming: PascalCase for components, camelCase for functions
+
+<span class="t-type">## Architecture</span>
+- Invoice parsing uses Claude API via Background Function (15min timeout)
+- Retail pricing formula: <span class="t-out">retail = landed_cost × 3.5</span>
+- All currency in USD, 2 decimal places
+
+<span class="t-type">## Common Commands</span>
+- <span class="t-cmd">npm run dev</span> — local development
+- <span class="t-cmd">netlify deploy --prod</span> — production deploy
+
+<span class="t-type">## Things To Never Do</span>
+- Never commit .env files
+- Never delete Supabase migration files
+- Never use localStorage for sensitive data
+        </div>
+        <div class="concept-block">
+          <h3>Nested CLAUDE.md Files</h3>
+          <p>For large monorepos, you can have CLAUDE.md at multiple levels:</p>
+          <div class="terminal">
+            <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Directory Structure</span></div>
+            <div class="terminal-body">
+<span class="t-string">my-project/</span>
+├── <span class="t-type">CLAUDE.md</span>          <span class="t-comment">← Global rules for entire project</span>
+├── frontend/
+│   ├── <span class="t-type">CLAUDE.md</span>      <span class="t-comment">← React-specific rules, component patterns</span>
+│   └── src/
+├── backend/
+│   ├── <span class="t-type">CLAUDE.md</span>      <span class="t-comment">← API rules, auth patterns, DB conventions</span>
+│   └── routes/
+└── docs/
+            </div>
+          </div>
+          <p>When you run Claude from <code>backend/</code>, it loads <strong>both</strong> the root CLAUDE.md and backend/CLAUDE.md — giving you layered context.</p>
+        </div>`,
+      exercise: `
+        <div class="exercise-area">
+          <div class="exercise-header"><div class="exercise-number">1</div><div class="exercise-title">Write a CLAUDE.md Section</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">Write the "Coding Rules" section of a CLAUDE.md for a Node.js/Express API project. Include at least 4 rules covering: error handling, async patterns, naming, and security. Make them directive (Claude should ALWAYS/NEVER do X).</div>
+            <textarea class="exercise-input" id="ex-claudemd-1" placeholder="## Coding Rules&#10;- ALWAYS...&#10;- NEVER..." style="min-height:140px"></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('claudemd', 1)">Submit</button>
+            </div>
+            <div class="exercise-result" id="ex-result-claudemd-1"></div>
+          </div>
+        </div>
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">2</div><div class="exercise-title">True or False</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">True or False: CLAUDE.md is only read once when you first install Claude Code, then cached forever.</div>
+            <textarea class="exercise-input" id="ex-claudemd-2" placeholder="True or False, and explain why..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('claudemd', 2)">Check</button>
+            </div>
+            <div class="exercise-result" id="ex-result-claudemd-2"></div>
+          </div>
+        </div>`,
+      quiz: `<div id="quiz-claudemd"></div>`,
+      complete: `
+        <div class="completion-card">
+          <span class="completion-icon">📋</span>
+          <div class="completion-title">CLAUDE.md Unlocked!</div>
+          <div class="completion-xp">⚡ +100 XP Earned</div>
+          <div class="key-learnings">
+            <h4>Key Learnings</h4>
+            <div class="key-item">CLAUDE.md is auto-loaded every Claude Code session — it's Claude's project memory</div>
+            <div class="key-item">Write rules directively: "ALWAYS use async/await, NEVER use callbacks"</div>
+            <div class="key-item">Version control your CLAUDE.md — it belongs in git with your code</div>
+            <div class="key-item">Nested CLAUDE.md files stack — root + subdirectory rules both load</div>
+            <div class="key-item">Include: stack, coding rules, architecture, commands, and things to never do</div>
+          </div>
+          <button class="next-btn" onclick="goToModule('modes')">Next: Plan & Loop Modes →</button>
+        </div>`
+    },
+    quiz: [
+      { q: 'When is CLAUDE.md loaded by Claude Code?', opts: ['Once on install', 'Only when you ask Claude to read it', 'Automatically at the start of every session', 'Only in plan mode'], correct: 2, exp: 'CLAUDE.md is automatically loaded every time Claude Code starts in that directory.' },
+      { q: 'What should a great CLAUDE.md contain?', opts: ['Only the tech stack', 'Stack, coding rules, architecture, commands, and things never to do', 'Just the README contents', 'API credentials'], correct: 1, exp: 'A comprehensive CLAUDE.md covers stack, rules, architecture, commands, and explicit prohibitions.' },
+    ]
+  },
+  {
+    id: 'modes',
+    icon: '🔄',
+    name: 'Plan & Loop Modes',
+    subtitle: 'Control · 12 min',
+    xp: 100,
+    color: '#F59E0B',
+    eyebrow: 'Module 4 · Control Flow',
+    title: 'How Claude Thinks & Acts',
+    desc: 'Claude Code has different operating modes that change how much autonomy it takes. Understanding Plan Mode and Loop Mode lets you control exactly when Claude acts vs when it asks — the difference between a tool and an agent.',
+    tabs: ['Concept', 'Plan Mode', 'Loop Mode', 'Exercise', 'Quiz', 'Complete'],
+    content: {
+      concept: `
+        <div class="concept-block">
+          <h3>The Autonomy Spectrum</h3>
+          <p>Claude can operate anywhere from "only text, no actions" to "fully autonomous agent that runs until done." Plan Mode and Loop Mode are the two key controls on this spectrum.</p>
+          <div class="diagram-wrap">
+            <div class="diagram-title">Claude Autonomy Spectrum</div>
+            <div class="flow-row">
+              <div class="flow-box">Text Only<br><small style="color:var(--text-dim)">No tools</small></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-box highlight">Plan Mode<br><small>Shows plan, waits</small></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-box">Ask per action<br><small style="color:var(--text-dim)">Default</small></div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-box success-box">Loop Mode<br><small>Runs until done</small></div>
+            </div>
+          </div>
+          <ul>
+            <li><strong>No tools:</strong> Claude only responds with text — no file writes, no commands</li>
+            <li><strong>Plan Mode:</strong> Claude shows you what it WOULD do, then waits for approval</li>
+            <li><strong>Default:</strong> Claude asks before each significant action (safe but slower)</li>
+            <li><strong>Loop Mode:</strong> Claude runs autonomously, retrying and looping until task is complete</li>
+          </ul>
+        </div>`,
+      'Plan Mode': `
+        <div class="concept-block">
+          <h3>Plan Mode — See Before You Approve</h3>
+          <p>Plan Mode is like asking a contractor for a quote before they start work. Claude reads your codebase, thinks through the task, and presents a step-by-step plan — you approve or modify it before a single file is touched.</p>
+          <div class="highlight-box"><strong>When to use Plan Mode:</strong> Any time the task involves many file changes, refactoring, or you're unsure what Claude will do. It's essentially free — no tokens wasted on actual execution until you approve.</div>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Plan Mode in Action</span></div>
+          <div class="terminal-body">
+<span class="t-prompt">$ </span><span class="t-cmd">claude --plan "Migrate our codebase from React class components to hooks"</span>
+
+<span class="t-type">◆ PLAN — Pending your approval</span>
+<span class="t-out">──────────────────────────────────────────</span>
+<span class="t-out">I analyzed 23 files. Here's what I'll do:</span>
+
+<span class="t-out">1. Convert UserProfile.jsx</span>
+<span class="t-out">   - Remove class syntax, add useState/useEffect hooks</span>
+<span class="t-out">   - Lines affected: 12-89</span>
+
+<span class="t-out">2. Convert Dashboard.jsx</span>
+<span class="t-out">   - Extract 3 separate hooks for cleaner logic</span>
+<span class="t-out">   - Lines affected: 5-156</span>
+
+<span class="t-out">... (21 more files)</span>
+
+<span class="t-out">Estimated: ~340 line changes across 23 files</span>
+<span class="t-out">──────────────────────────────────────────</span>
+<span class="t-type">Approve plan? [y/n/modify]</span> <span class="t-cursor"></span>
+          </div>
+        </div>
+        <div class="concept-block">
+          <h3>Modifying a Plan</h3>
+          <p>You can say "modify" and tell Claude to adjust the plan — maybe exclude certain files, change the approach, or add steps — before execution begins. This is the killer feature of Plan Mode.</p>
+        </div>`,
+      'Loop Mode': `
+        <div class="concept-block">
+          <h3>Loop Mode — Set It and Let It Run</h3>
+          <p>Loop Mode means Claude keeps going until the task is done — it runs, checks results, fixes errors, and retries autonomously. This is true agentic behavior.</p>
+          <p>The "loop" refers to the agent loop: Claude takes an action → observes the result → decides next action → repeats until the goal is achieved.</p>
+          <div class="highlight-box"><strong>Classic loop pattern:</strong> Claude writes code → runs tests → tests fail → Claude reads error → fixes code → runs tests again → until all tests pass. No human needed in the middle.</div>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Loop Mode — Autonomous Test-Fix Cycle</span></div>
+          <div class="terminal-body">
+<span class="t-prompt">$ </span><span class="t-cmd">claude "Fix all failing tests. Keep running them until they all pass."</span>
+
+<span class="t-type">⟳ Loop iteration 1</span>
+<span class="t-out">Running: npm test</span>
+<span class="t-err">✗ 3 tests failed: auth.test.js</span>
+<span class="t-out">Reading test file...</span>
+<span class="t-out">Identified: missing async/await in getUserById()</span>
+<span class="t-out">Fixing auth.service.js line 42...</span>
+
+<span class="t-type">⟳ Loop iteration 2</span>
+<span class="t-out">Running: npm test</span>
+<span class="t-err">✗ 1 test failed: auth.test.js:88</span>
+<span class="t-out">Identified: token expiry not handled</span>
+<span class="t-out">Fixing auth.middleware.js line 17...</span>
+
+<span class="t-type">⟳ Loop iteration 3</span>
+<span class="t-out">Running: npm test</span>
+<span class="t-out">✓ All 47 tests passed</span>
+
+<span class="t-type">✓ Task complete in 3 iterations</span>
+          </div>
+        </div>
+        <div class="callout">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-text"><strong>Caution:</strong> Loop Mode without a clear success condition can run indefinitely. Always give Claude a specific stopping criterion: "until tests pass," "until the build succeeds," "until you've processed all 50 files."</div>
+        </div>`,
+      exercise: `
+        <div class="exercise-area">
+          <div class="exercise-header"><div class="exercise-number">1</div><div class="exercise-title">Mode Selection</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">You're about to run Claude on a production codebase to rename a database column across 40 files. This is high-risk. Which mode should you use and why?</div>
+            <textarea class="exercise-input" id="ex-modes-1" placeholder="I would use ___ mode because..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('modes', 1)">Check</button>
+            </div>
+            <div class="exercise-result" id="ex-result-modes-1"></div>
+          </div>
+        </div>
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">2</div><div class="exercise-title">Write a Loop Mode Command</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">Write a Claude CLI command that would autonomously: scan all Python files for syntax errors, fix them, run the test suite, and stop only when all tests pass.</div>
+            <textarea class="exercise-input" id="ex-modes-2" placeholder='claude "..."'></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('modes', 2)">Check</button>
+              <button class="btn-secondary" onclick="showHint('modes', 2)">Hint</button>
+            </div>
+            <div class="exercise-result" id="ex-result-modes-2"></div>
+          </div>
+        </div>`,
+      quiz: `<div id="quiz-modes"></div>`,
+      complete: `
+        <div class="completion-card">
+          <span class="completion-icon">🔄</span>
+          <div class="completion-title">Mode Master!</div>
+          <div class="completion-xp">⚡ +100 XP Earned</div>
+          <div class="key-learnings">
+            <h4>Key Learnings</h4>
+            <div class="key-item">Plan Mode shows you what Claude will do BEFORE it does it — free preview</div>
+            <div class="key-item">Loop Mode is the agent loop: act → observe → decide → repeat until done</div>
+            <div class="key-item">Always give Loop Mode a clear stopping criterion to prevent infinite loops</div>
+            <div class="key-item">For risky/broad changes: Plan Mode first, then approve before execution</div>
+            <div class="key-item">For repetitive automation (test/fix cycles): Loop Mode is your power tool</div>
+          </div>
+          <button class="next-btn" onclick="goToModule('mcp')">Next: MCP Servers →</button>
+        </div>`
+    },
+    quiz: [
+      { q: 'What does Plan Mode do before executing any changes?', opts: ['Backs up your files', 'Presents a step-by-step plan for your approval', 'Runs in a sandboxed environment', 'Asks for your API key again'], correct: 1, exp: 'Plan Mode shows Claude\'s intended action plan and waits for human approval before touching any files.' },
+      { q: 'In Loop Mode, what does the "loop" refer to?', opts: ['A while loop in Claude\'s code', 'The act → observe → decide → repeat cycle', 'Looping through files in a directory', 'Re-running the same prompt'], correct: 1, exp: 'The agent loop: Claude takes an action, observes results, decides next step, and repeats until the goal is achieved.' },
+    ]
+  },
+  {
+    id: 'mcp',
+    icon: '🔌',
+    name: 'MCP Servers',
+    subtitle: 'Extensions · 15 min',
+    xp: 150,
+    color: '#CC785C',
+    eyebrow: 'Module 5 · Integrations',
+    title: 'Model Context Protocol',
+    desc: 'MCP (Model Context Protocol) is the open standard that lets Claude connect to external tools, APIs, and data sources. Instead of Claude only knowing what's in its context window, MCP gives it real superpowers — search, databases, file systems, third-party APIs.',
+    tabs: ['Concept', 'Architecture', 'Setup', 'Exercise', 'Quiz', 'Complete'],
+    content: {
+      concept: `
+        <div class="concept-block">
+          <h3>What is MCP?</h3>
+          <p>MCP stands for Model Context Protocol. It's an open standard (published by Anthropic) that defines how AI models connect to external tools and data sources. Think of it like USB — a standard plug that lets Claude connect to anything.</p>
+          <p>Before MCP: you had to manually copy-paste web search results, database exports, or API responses into your Claude context. After MCP: Claude calls these things itself, in real time, autonomously.</p>
+          <div class="highlight-box"><strong>MCP changes Claude from a brain to a brain with hands.</strong> It can now reach out and interact with the world — not just reason about information you give it.</div>
+          <ul>
+            <li>MCP servers expose <strong>tools</strong> (functions Claude can call), <strong>resources</strong> (data Claude can read), and <strong>prompts</strong> (templates)</li>
+            <li>You can connect multiple MCP servers simultaneously</li>
+            <li>Servers run locally or remotely (SSE/HTTP transport)</li>
+            <li>The MCP ecosystem has hundreds of servers: GitHub, Slack, Airtable, Postgres, filesystem, browser automation...</li>
+            <li>You can <strong>build your own</strong> MCP server in Node.js or Python in hours</li>
+          </ul>
+        </div>`,
+      Architecture: `
+        <div class="concept-block">
+          <h3>How MCP Works</h3>
+        </div>
+        <div class="diagram-wrap">
+          <div class="diagram-title">MCP Architecture</div>
+          <div class="flow-row">
+            <div class="flow-box highlight">Claude (LLM)</div>
+            <div class="flow-arrow">↔</div>
+            <div class="flow-box">Claude Code<br><small style="color:var(--text-dim)">MCP Client</small></div>
+            <div class="flow-arrow">↔</div>
+            <div class="flow-box">MCP Protocol<br><small style="color:var(--text-dim)">JSON-RPC</small></div>
+          </div>
+          <div class="flow-row" style="margin-top:12px">
+            <div style="width:100%;display:flex;gap:10px;flex-wrap:wrap;">
+              <div class="flow-box success-box">MCP Server<br><small>GitHub</small></div>
+              <div class="flow-box success-box">MCP Server<br><small>Airtable</small></div>
+              <div class="flow-box success-box">MCP Server<br><small>Postgres</small></div>
+              <div class="flow-box success-box">MCP Server<br><small>Your Custom API</small></div>
+            </div>
+          </div>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">What Happens When Claude Uses an MCP Tool</span></div>
+          <div class="terminal-body">
+<span class="t-comment">1. User asks Claude: "What are my open GitHub PRs?"</span>
+
+<span class="t-comment">2. Claude decides to call the GitHub MCP tool:</span>
+<span class="t-type">→ Tool call: github.list_pull_requests({ state: "open", repo: "ParbtaniA/venzaura" })</span>
+
+<span class="t-comment">3. MCP server calls GitHub API with your token</span>
+<span class="t-comment">4. Returns structured data to Claude</span>
+
+<span class="t-comment">5. Claude synthesizes: "You have 3 open PRs:..."</span>
+<span class="t-out">  - feat/invoice-parsing (2 days old)</span>
+<span class="t-out">  - fix/rls-policy (5 days old)</span>
+<span class="t-out">  - chore/deps-update (1 day old)</span>
+          </div>
+        </div>`,
+      Setup: `
+        <div class="concept-block">
+          <h3>Connecting an MCP Server</h3>
+          <p>MCP servers are configured in Claude Code's settings file. Here's how to add them:</p>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">~/.claude/settings.json — MCP Configuration</span></div>
+          <div class="terminal-body">
+<span class="t-type">{</span>
+  <span class="t-flag">"mcpServers"</span>: {
+
+    <span class="t-comment">// Airtable — connect to your bases</span>
+    <span class="t-flag">"airtable"</span>: {
+      <span class="t-flag">"type"</span>: <span class="t-string">"url"</span>,
+      <span class="t-flag">"url"</span>: <span class="t-string">"https://mcp.airtable.com/mcp"</span>,
+      <span class="t-flag">"headers"</span>: { <span class="t-flag">"Authorization"</span>: <span class="t-string">"Bearer YOUR_TOKEN"</span> }
+    },
+
+    <span class="t-comment">// Local Postgres MCP server</span>
+    <span class="t-flag">"postgres"</span>: {
+      <span class="t-flag">"type"</span>: <span class="t-string">"stdio"</span>,
+      <span class="t-flag">"command"</span>: <span class="t-string">"npx"</span>,
+      <span class="t-flag">"args"</span>: [<span class="t-string">"@modelcontextprotocol/server-postgres"</span>,
+               <span class="t-string">"postgresql://localhost/mydb"</span>]
+    },
+
+    <span class="t-comment">// Filesystem access</span>
+    <span class="t-flag">"filesystem"</span>: {
+      <span class="t-flag">"type"</span>: <span class="t-string">"stdio"</span>,
+      <span class="t-flag">"command"</span>: <span class="t-string">"npx"</span>,
+      <span class="t-flag">"args"</span>: [<span class="t-string">"@modelcontextprotocol/server-filesystem"</span>,
+               <span class="t-string">"/Users/ayaz/projects"</span>]
+    }
+  }
+<span class="t-type">}</span>
+          </div>
+        </div>
+        <div class="concept-block">
+          <h3>Popular MCP Servers to Know</h3>
+          <ul>
+            <li><strong>@anthropic/mcp-server-filesystem</strong> — Read/write local files beyond the project dir</li>
+            <li><strong>@modelcontextprotocol/server-github</strong> — Issues, PRs, repos, commits</li>
+            <li><strong>mcp.airtable.com</strong> — Full Airtable access (great for your GEC intranet)</li>
+            <li><strong>@modelcontextprotocol/server-postgres</strong> — Direct SQL against your database</li>
+            <li><strong>@modelcontextprotocol/server-brave-search</strong> — Real-time web search</li>
+            <li><strong>mcp.netlify.app/mcp</strong> — Deploy, manage Netlify sites via Claude</li>
+          </ul>
+        </div>`,
+      exercise: `
+        <div class="exercise-area">
+          <div class="exercise-header"><div class="exercise-number">1</div><div class="exercise-title">MCP Use Case Design</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">You're building a Claude workflow to automatically sync your Shopify orders into an Airtable base every hour. Which two MCP servers would you need to connect, and what would Claude's task description look like?</div>
+            <textarea class="exercise-input" id="ex-mcp-1" placeholder="I would connect: ...\nClaude's task: ..." style="min-height:120px"></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('mcp', 1)">Submit</button>
+            </div>
+            <div class="exercise-result" id="ex-result-mcp-1"></div>
+          </div>
+        </div>
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">2</div><div class="exercise-title">Config Writing</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">Write the JSON config block to add a GitHub MCP server connection to ~/.claude/settings.json. Use "type": "url" and point to the official GitHub MCP endpoint (hypothetical: https://mcp.github.com/sse). Include a placeholder for the auth token.</div>
+            <textarea class="exercise-input" id="ex-mcp-2" placeholder='"github": { ... }'></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('mcp', 2)">Check</button>
+              <button class="btn-secondary" onclick="showHint('mcp', 2)">Hint</button>
+            </div>
+            <div class="exercise-result" id="ex-result-mcp-2"></div>
+          </div>
+        </div>`,
+      quiz: `<div id="quiz-mcp"></div>`,
+      complete: `
+        <div class="completion-card">
+          <span class="completion-icon">🔌</span>
+          <div class="completion-title">MCP Connected!</div>
+          <div class="completion-xp">⚡ +150 XP Earned</div>
+          <div class="key-learnings">
+            <h4>Key Learnings</h4>
+            <div class="key-item">MCP = open standard for connecting Claude to external tools and data sources</div>
+            <div class="key-item">Servers expose tools (functions), resources (data), and prompts (templates)</div>
+            <div class="key-item">Configure via ~/.claude/settings.json under "mcpServers"</div>
+            <div class="key-item">Two transport types: "url" (remote SSE/HTTP) or "stdio" (local process)</div>
+            <div class="key-item">You can build your own MCP server — great for internal APIs and databases</div>
+          </div>
+          <button class="next-btn" onclick="goToModule('agents')">Next: Parallel Sub-Agents →</button>
+        </div>`
+    },
+    quiz: [
+      { q: 'What does MCP stand for?', opts: ['Multi-Claude Protocol', 'Model Context Protocol', 'Meta Connection Platform', 'Module Configuration Plugin'], correct: 1, exp: 'MCP stands for Model Context Protocol — an open standard for connecting AI models to external tools.' },
+      { q: 'Where do you configure MCP servers for Claude Code?', opts: ['CLAUDE.md', 'package.json', '~/.claude/settings.json', '.env file'], correct: 2, exp: 'MCP server connections are configured in ~/.claude/settings.json under the "mcpServers" key.' },
+      { q: 'What are the two MCP server transport types?', opts: ['"local" and "remote"', '"url" and "stdio"', '"http" and "websocket"', '"fast" and "slow"'], correct: 1, exp: '"url" is for remote servers (SSE/HTTP), "stdio" is for local process-based servers.' },
+    ]
+  },
+  {
+    id: 'agents',
+    icon: '🤝',
+    name: 'Parallel Sub-Agents',
+    subtitle: 'Orchestration · 15 min',
+    xp: 150,
+    color: '#7C3AED',
+    eyebrow: 'Module 6 · Multi-Agent',
+    title: 'Orchestrate Multiple Claudes',
+    desc: 'The most powerful Claude setups use multiple agents working in parallel — one orchestrating, others executing specialized tasks simultaneously. This is how you compress hours of work into minutes.',
+    tabs: ['Concept', 'Patterns', 'Exercise', 'Quiz', 'Complete'],
+    content: {
+      concept: `
+        <div class="concept-block">
+          <h3>Why One Agent Isn't Always Enough</h3>
+          <p>A single Claude agent is powerful, but it's serial — it does one thing, then the next. If you have 10 independent tasks, a single agent takes 10× the time. Parallel sub-agents run those 10 tasks simultaneously.</p>
+          <p>Additionally, specialization helps: an agent focused only on code review gets better results than one juggling code review, file writing, and web search simultaneously.</p>
+          <div class="highlight-box"><strong>The orchestrator-worker pattern:</strong> One "boss" Claude manages the workflow. Multiple "worker" Claudes each handle a specific slice of the task in parallel. The boss synthesizes results.</div>
+        </div>
+        <div class="concept-block">
+          <h3>When to Use Multi-Agent</h3>
+          <ul>
+            <li><strong>Parallel data processing</strong> — process 100 documents simultaneously across 10 agents</li>
+            <li><strong>Specialized roles</strong> — one agent writes code, another writes tests, another writes docs, all from the same spec</li>
+            <li><strong>Independent verification</strong> — two agents solve the same problem, a third compares and picks the best</li>
+            <li><strong>Long workflows</strong> — break a 2-hour task into parallel 15-minute sub-tasks</li>
+            <li><strong>A/B testing prompts</strong> — run multiple prompt variants simultaneously and compare outputs</li>
+          </ul>
+        </div>`,
+      Patterns: `
+        <div class="concept-block">
+          <h3>The Orchestrator Pattern</h3>
+          <p>The most common multi-agent pattern is the orchestrator-worker setup. Here's how it works in code:</p>
+        </div>
+        <div class="code-block">
+          <span class="code-label">Node.js</span>
+<span class="t-type">import</span> Anthropic <span class="t-type">from</span> <span class="t-string">'@anthropic-ai/sdk'</span>;
+<span class="t-type">const</span> client = <span class="t-type">new</span> Anthropic();
+
+<span class="t-comment">// ORCHESTRATOR: Breaks down the task</span>
+<span class="t-type">async function</span> <span class="t-out">orchestrate</span>(bigTask) {
+  <span class="t-type">const</span> plan = <span class="t-type">await</span> client.messages.create({
+    model: <span class="t-string">'claude-sonnet-4-6'</span>,
+    messages: [{ role: <span class="t-string">'user'</span>, content: 
+      <span class="t-string">`Break this task into 5 parallel sub-tasks: ${bigTask}`</span>
+    }]
+  });
+
+  <span class="t-comment">// WORKERS: Run all sub-tasks in parallel</span>
+  <span class="t-type">const</span> subTasks = parseSubTasks(plan);
+  <span class="t-type">const</span> results = <span class="t-type">await</span> Promise.all(
+    subTasks.map(task => <span class="t-out">runWorkerAgent</span>(task))
+  );
+
+  <span class="t-comment">// SYNTHESIZER: Combine results</span>
+  <span class="t-type">return await</span> <span class="t-out">synthesize</span>(results);
+}
+
+<span class="t-comment">// Each worker is its own Claude API call</span>
+<span class="t-type">async function</span> <span class="t-out">runWorkerAgent</span>(task) {
+  <span class="t-type">return await</span> client.messages.create({
+    model: <span class="t-string">'claude-haiku-4'</span>, <span class="t-comment">// cheaper for workers</span>
+    messages: [{ role: <span class="t-string">'user'</span>, content: task }]
+  });
+}
+        </div>
+        <div class="concept-block">
+          <h3>Real-World Pattern: Parallel Code Review</h3>
+          <div class="terminal">
+            <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Parallel Sub-Agent Code Review Pipeline</span></div>
+            <div class="terminal-body">
+<span class="t-comment">Orchestrator receives: "Review PR #47"</span>
+
+<span class="t-type">Spawns 4 parallel agents:</span>
+<span class="t-out">  Agent 1: "Check for security vulnerabilities in PR #47"</span>
+<span class="t-out">  Agent 2: "Check for performance issues in PR #47"</span>
+<span class="t-out">  Agent 3: "Check for test coverage gaps in PR #47"</span>
+<span class="t-out">  Agent 4: "Check code style and best practices in PR #47"</span>
+
+<span class="t-comment">All 4 run simultaneously (4× faster than serial)</span>
+
+<span class="t-type">Orchestrator synthesizes:</span>
+<span class="t-out">  "PR #47 Review Summary:
+   🔐 Security: 1 SQL injection risk (line 89)
+   ⚡ Performance: N+1 query pattern in loop
+   🧪 Tests: Missing edge cases for empty input
+   ✅ Style: Generally clean, minor naming issues"</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <div class="callout-icon">💡</div>
+          <div class="callout-text"><strong>Cost optimization tip:</strong> Use Sonnet or Opus for the orchestrator (complex reasoning) but Haiku for workers (simple, focused tasks). This gives you the intelligence where it counts and saves money on repetitive sub-tasks.</div>
+        </div>
+        <div class="concept-block">
+          <h3>Sub-Agents in Claude Code CLI</h3>
+          <p>You can trigger sub-agent behavior directly in CLI by asking Claude to parallelize:</p>
+          <div class="terminal">
+            <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">CLI Multi-Agent Commands</span></div>
+            <div class="terminal-body">
+<span class="t-comment"># Ask Claude to spawn sub-agents for parallel processing</span>
+<span class="t-prompt">$ </span><span class="t-cmd">claude "Process all 50 invoice PDFs in /invoices/ in parallel. Extract: vendor, amount, date. Output a single CSV."</span>
+
+<span class="t-comment"># Claude Code will spawn multiple background processes</span>
+<span class="t-out">⟳ Spawning 10 parallel sub-agents...</span>
+<span class="t-out">⟳ Processing batch 1/5 (invoices 1-10)...</span>
+<span class="t-out">⟳ Processing batch 2/5 (invoices 11-20)... [parallel]</span>
+<span class="t-out">⟳ Processing batch 3/5 (invoices 21-30)... [parallel]</span>
+<span class="t-out">✓ Merging results...</span>
+<span class="t-out">✓ output.csv created (50 rows)</span>
+            </div>
+          </div>
+        </div>`,
+      exercise: `
+        <div class="exercise-area">
+          <div class="exercise-header"><div class="exercise-number">1</div><div class="exercise-title">Design a Multi-Agent Pipeline</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">You need to analyze 200 customer support tickets and: (a) categorize them by type, (b) extract sentiment, (c) identify the top 10 recurring issues. Design a multi-agent pipeline that does this efficiently. Describe the orchestrator, worker agents, and synthesizer.</div>
+            <textarea class="exercise-input" id="ex-agents-1" placeholder="Orchestrator: ...&#10;Workers: ...&#10;Synthesizer: ..." style="min-height:160px"></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('agents', 1)">Submit</button>
+            </div>
+            <div class="exercise-result" id="ex-result-agents-1"></div>
+          </div>
+        </div>
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">2</div><div class="exercise-title">Model Selection</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">In a parallel sub-agent pipeline, why would you use claude-haiku-4 for worker agents and claude-sonnet-4-6 (or Opus) for the orchestrator? What trade-offs does this create?</div>
+            <textarea class="exercise-input" id="ex-agents-2" placeholder="I'd use Haiku for workers because... The trade-off is..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('agents', 2)">Check</button>
+            </div>
+            <div class="exercise-result" id="ex-result-agents-2"></div>
+          </div>
+        </div>`,
+      quiz: `<div id="quiz-agents"></div>`,
+      complete: `
+        <div class="completion-card">
+          <span class="completion-icon">🤝</span>
+          <div class="completion-title">Agent Architect!</div>
+          <div class="completion-xp">⚡ +150 XP Earned</div>
+          <div class="key-learnings">
+            <h4>Key Learnings</h4>
+            <div class="key-item">Orchestrator-worker pattern: one boss Claude manages N worker Claudes running in parallel</div>
+            <div class="key-item">Parallel agents compress time — 10 serial tasks become 1 parallel batch</div>
+            <div class="key-item">Specialization improves quality — focused agents outperform generalist ones</div>
+            <div class="key-item">Cost optimization: Sonnet/Opus for orchestration, Haiku for repetitive worker tasks</div>
+            <div class="key-item">Promise.all() is your friend — native JavaScript parallel execution pattern</div>
+          </div>
+          <button class="next-btn" onclick="goToModule('git')">Next: Git Integration →</button>
+        </div>`
+    },
+    quiz: [
+      { q: 'What is the main benefit of parallel sub-agents over a single agent?', opts: ['Better code quality', 'Lower cost per token', 'Tasks run simultaneously, reducing total time', 'Access to more MCP servers'], correct: 2, exp: 'Parallel agents run tasks simultaneously — what would take 10× the time serially completes in 1× the time.' },
+      { q: 'Which model tier is best for orchestrator agents that need complex reasoning?', opts: ['Haiku — fastest', 'Sonnet or Opus — most capable', 'It doesn\'t matter — use the same model', 'Always use the cheapest'], correct: 1, exp: 'The orchestrator needs to plan, reason, and synthesize — use Sonnet or Opus. Workers doing repetitive tasks can use cheaper Haiku.' },
+    ]
+  },
+  {
+    id: 'git',
+    icon: '🌿',
+    name: 'Git Integration',
+    subtitle: 'Automation · 12 min',
+    xp: 150,
+    color: '#22D3A5',
+    eyebrow: 'Module 7 · Git',
+    title: 'Claude in Your Git Workflow',
+    desc: 'Claude integrates deeply with Git — reviewing PRs, writing commit messages, creating branches for new features, and even running autonomously on CI/CD pipelines. This is where Claude becomes a permanent member of your dev team.',
+    tabs: ['Concept', 'Workflows', 'Exercise', 'Quiz', 'Complete'],
+    content: {
+      concept: `
+        <div class="concept-block">
+          <h3>Claude as a Git Team Member</h3>
+          <p>The Claude CLI has native Git awareness — it can read diffs, create commits, manage branches, and reason about your entire commit history. Combined with MCP (GitHub/GitLab servers), it becomes a full autonomous code reviewer and contributor.</p>
+          <ul>
+            <li><strong>PR reviews</strong> — Claude reads the diff and gives structured feedback on bugs, style, performance</li>
+            <li><strong>Commit messages</strong> — Claude generates conventional commit messages from your staged changes</li>
+            <li><strong>Branch creation</strong> — Claude creates feature branches, makes changes, and opens PRs</li>
+            <li><strong>Merge conflict resolution</strong> — Claude reads both sides and resolves conflicts intelligently</li>
+            <li><strong>CI/CD automation</strong> — Claude runs in GitHub Actions on every PR for automated review</li>
+          </ul>
+          <div class="highlight-box"><strong>This is where it gets powerful:</strong> Imagine a GitHub Action that automatically reviews every PR, comments with bugs found, suggests improvements, and even pushes fixes — without you lifting a finger.</div>
+        </div>`,
+      Workflows: `
+        <div class="concept-block">
+          <h3>Core Git + Claude Workflows</h3>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Git Integration Commands</span></div>
+          <div class="terminal-body">
+<span class="t-comment">── COMMIT MESSAGE GENERATION ─────────────</span>
+<span class="t-prompt">$ </span><span class="t-cmd">git add -A && git diff --staged | claude "Write a conventional commit message"</span>
+<span class="t-out">feat(auth): add JWT refresh token rotation</span>
+<span class="t-out">- Implements sliding window refresh strategy</span>
+<span class="t-out">- Adds token blacklist for revoked sessions</span>
+<span class="t-out">- Updates middleware to handle token family</span>
+
+<span class="t-comment">── PR REVIEW ─────────────────────────────</span>
+<span class="t-prompt">$ </span><span class="t-cmd">git diff main..feature/auth | claude "Review this PR for bugs, security, and style"</span>
+<span class="t-out">🔍 PR Review for feature/auth:</span>
+<span class="t-out">  🔐 Security: Token not validated server-side (line 42)</span>
+<span class="t-out">  🐛 Bug: Race condition in refresh logic (line 89)</span>
+<span class="t-out">  ✅ Style: Clean, conventional commits used</span>
+
+<span class="t-comment">── CREATE A FEATURE BRANCH + PR ──────────</span>
+<span class="t-prompt">$ </span><span class="t-cmd">claude "Create a new branch feat/dark-mode, implement dark mode toggle in the header component, commit changes, and show me what to push"</span>
+<span class="t-out">✓ Created branch feat/dark-mode</span>
+<span class="t-out">✓ Added useTheme hook in src/hooks/useTheme.js</span>
+<span class="t-out">✓ Updated Header.jsx with toggle</span>
+<span class="t-out">✓ Committed: feat(ui): add dark mode toggle to header</span>
+<span class="t-out">→ Run: git push origin feat/dark-mode</span>
+          </div>
+        </div>
+        <div class="concept-block">
+          <h3>Automated PR Review — GitHub Actions</h3>
+          <p>This GitHub Action automatically runs Claude Code to review every PR:</p>
+        </div>
+        <div class="code-block">
+          <span class="code-label">.github/workflows/claude-review.yml</span>
+<span class="t-type">name</span>: Claude PR Review
+
+<span class="t-type">on</span>:
+  pull_request:
+    types: [opened, synchronize]
+
+<span class="t-type">jobs</span>:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+      
+      - name: Run Claude Review
+        env:
+          ANTHROPIC_API_KEY: <span class="t-string">${{ secrets.ANTHROPIC_API_KEY }}</span>
+          GH_TOKEN: <span class="t-string">${{ secrets.GITHUB_TOKEN }}</span>
+        run: |
+          git diff origin/main..HEAD | claude <span class="t-string">"
+            Review this PR. Output in this format:
+            BUGS: [list any bugs found]
+            SECURITY: [security issues]  
+            SUGGESTIONS: [improvements]
+            VERDICT: APPROVE or REQUEST_CHANGES
+          "</span> > review.txt
+          gh pr comment <span class="t-string">${{ github.event.number }}</span> --body "$(cat review.txt)"
+        </div>`,
+      exercise: `
+        <div class="exercise-area">
+          <div class="exercise-header"><div class="exercise-number">1</div><div class="exercise-title">Git Pipeline Command</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">Write a single shell command that: takes your staged git changes, pipes them to Claude, and asks Claude to write a conventional commit message following the format: "type(scope): description"</div>
+            <textarea class="exercise-input" id="ex-git-1" placeholder="git ... | claude ..."></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('git', 1)">Check</button>
+              <button class="btn-secondary" onclick="showHint('git', 1)">Hint</button>
+            </div>
+            <div class="exercise-result" id="ex-result-git-1"></div>
+          </div>
+        </div>
+        <div class="exercise-area" style="margin-top:16px">
+          <div class="exercise-header"><div class="exercise-number">2</div><div class="exercise-title">CI/CD Strategy</div></div>
+          <div class="exercise-body">
+            <div class="exercise-prompt">Describe a complete GitHub Actions workflow where Claude automatically (a) reviews every PR, (b) checks that tests pass, and (c) blocks merge if Claude finds critical security issues. What steps would this workflow have?</div>
+            <textarea class="exercise-input" id="ex-git-2" placeholder="Step 1: Checkout code&#10;Step 2: ..." style="min-height:140px"></textarea>
+            <div class="exercise-actions">
+              <button class="btn-primary" onclick="checkExercise('git', 2)">Submit</button>
+            </div>
+            <div class="exercise-result" id="ex-result-git-2"></div>
+          </div>
+        </div>`,
+      quiz: `<div id="quiz-git"></div>`,
+      complete: `
+        <div class="completion-card">
+          <span class="completion-icon">🌿</span>
+          <div class="completion-title">Git Master!</div>
+          <div class="completion-xp">⚡ +150 XP Earned</div>
+          <div class="key-learnings">
+            <h4>Key Learnings</h4>
+            <div class="key-item">git diff | claude is the core pattern — pipe any diff for review or analysis</div>
+            <div class="key-item">Claude can create branches, make commits, and manage PRs autonomously</div>
+            <div class="key-item">GitHub Actions + Claude Code = automated PR reviewer on every push</div>
+            <div class="key-item">Use GH_TOKEN in CI to let Claude post review comments directly to PRs</div>
+            <div class="key-item">Claude knows conventional commits — let it write your commit messages</div>
+          </div>
+          <button class="next-btn" onclick="showCertificate()">🎓 Claim Your Certificate!</button>
+        </div>`
+    },
+    quiz: [
+      { q: 'What shell pattern lets you use Claude to review a git PR?', opts: ['git review | claude', 'git diff main..feature | claude "review this"', 'claude --pr review', 'git log | claude'], correct: 1, exp: 'git diff main..feature-branch pipes the PR diff to Claude, which then reviews it.' },
+      { q: 'In GitHub Actions, what secret gives Claude permission to post PR comments?', opts: ['ANTHROPIC_API_KEY', 'GH_TOKEN / GITHUB_TOKEN', 'CLAUDE_SECRET', 'GITHUB_API_KEY'], correct: 1, exp: 'GITHUB_TOKEN (or GH_TOKEN) is the GitHub Actions secret that grants permission to post comments via the GitHub CLI.' },
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════
+//  APP STATE
+// ══════════════════════════════════════════════
+let currentUser = null;
+let currentModuleId = 'intro';
+let currentTab = 0;
+let quizState = {};
+
+// ══════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════
+function showRegister() {
+  document.getElementById('auth-login-view').style.display = 'none';
+  document.getElementById('auth-register-view').style.display = 'block';
+}
+function showLogin() {
+  document.getElementById('auth-register-view').style.display = 'none';
+  document.getElementById('auth-login-view').style.display = 'block';
+}
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const errEl = document.getElementById('reg-error');
+  errEl.style.display = 'none';
+  if (!name || !email || !pass) { errEl.textContent = 'All fields required.'; errEl.style.display = 'block'; return; }
+  if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  const users = DB.getUsers();
+  if (users[email]) { errEl.textContent = 'Email already registered. Sign in instead.'; errEl.style.display = 'block'; return; }
+  DB.saveUserData(email, { name, email, password: btoa(pass), joinedAt: new Date().toISOString(), progress: {}, stats: { xp: 0, exercises: 0, streak: 0, lastVisit: null } });
+  DB.saveSession({ email, name });
+  launchApp(email, name);
+}
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.style.display = 'none';
+  const u = DB.getUserData(email);
+  if (!u || u.password !== btoa(pass)) { errEl.textContent = 'Invalid email or password.'; errEl.style.display = 'block'; return; }
+  DB.saveSession({ email, name: u.name });
+  launchApp(email, u.name);
+}
+function doLogout() {
+  DB.clearSession();
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('auth-screen').style.display = 'flex';
+  showLogin();
+}
+function launchApp(email, name) {
+  currentUser = email;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('user-name-display').textContent = name;
+  document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+  DB.updateStreak(email);
+  updateTopStats();
+  buildSidebar();
+  loadModule('intro');
+}
+
+// ══════════════════════════════════════════════
+//  UI BUILDERS
+// ══════════════════════════════════════════════
+function updateTopStats() {
+  const stats = DB.getStats(currentUser);
+  const progress = DB.getProgress(currentUser);
+  const completed = MODULES.filter(m => progress[m.id]?.completed).length;
+  const totalXP = 700;
+  document.getElementById('stat-completed').textContent = completed + '/7';
+  document.getElementById('stat-xp').textContent = stats.xp || 0;
+  document.getElementById('stat-exercises').textContent = stats.exercises || 0;
+  document.getElementById('stat-streak').textContent = stats.streak || 0;
+  const xpPct = Math.min(100, ((stats.xp || 0) / totalXP) * 100);
+  document.getElementById('xp-fill').style.width = xpPct + '%';
+  document.getElementById('xp-num').textContent = `${stats.xp || 0} / ${totalXP}`;
+}
+
+function buildSidebar() {
+  const progress = DB.getProgress(currentUser);
+  const list = document.getElementById('module-list');
+  list.innerHTML = MODULES.map(m => {
+    const p = progress[m.id] || {};
+    const done = p.completed;
+    const tabs = m.tabs.length;
+    const doneSteps = p.completedTabs ? p.completedTabs.length : 0;
+    const pct = Math.round((doneSteps / tabs) * 100);
+    const circumference = 2 * Math.PI * 14;
+    const offset = circumference - (pct / 100) * circumference;
+    return `<div class="module-item ${m.id === currentModuleId ? 'active' : ''}" onclick="loadModule('${m.id}')">
+      <div class="module-progress-ring">
+        <svg width="36" height="36" viewBox="0 0 36 36">
+          <circle class="ring-bg" cx="18" cy="18" r="14"/>
+          <circle class="ring-fill" cx="18" cy="18" r="14"
+            stroke="${done ? 'var(--success)' : m.color}"
+            stroke-dasharray="${circumference}"
+            stroke-dashoffset="${offset}"/>
+        </svg>
+        <div class="ring-icon">${m.icon}</div>
+      </div>
+      <div class="module-info">
+        <div class="module-name">${m.name}</div>
+        <div class="module-meta">${m.subtitle}</div>
+      </div>
+      <div class="module-badge ${done ? 'done' : m.id === currentModuleId ? 'active' : ''}">${done ? '✓' : pct + '%'}</div>
+    </div>`;
+  }).join('');
+}
+
+function loadModule(id) {
+  currentModuleId = id;
+  currentTab = 0;
+  quizState = {};
+  buildSidebar();
+  renderLesson();
+}
+
+function goToModule(id) {
+  loadModule(id);
+  window.scrollTo(0, 0);
+  document.getElementById('main-content').scrollTop = 0;
+}
+
+function renderLesson() {
+  const m = MODULES.find(x => x.id === currentModuleId);
+  const container = document.getElementById('lesson-container');
+  const tabKeys = Object.keys(m.content);
+  
+  container.innerHTML = `
+    <div class="lesson-header">
+      <div class="lesson-eyebrow">${m.eyebrow}</div>
+      <div class="lesson-title">${m.title}</div>
+      <div class="lesson-desc">${m.desc}</div>
+    </div>
+    <div class="lesson-tabs">
+      ${tabKeys.map((k, i) => `<div class="lesson-tab ${i === 0 ? 'active' : ''}" onclick="switchTab(${i})" id="tab-btn-${i}">${m.tabs[i] || k}</div>`).join('')}
+    </div>
+    <div class="lesson-body">
+      ${tabKeys.map((k, i) => `<div class="tab-content ${i === 0 ? 'active' : ''}" id="tab-${i}">${m.content[k]}</div>`).join('')}
+    </div>
+  `;
+  
+  // Render quizzes
+  if (m.quiz) renderQuiz(m);
+
+  // Auto-mark concept tab as seen
+  markTabDone(0);
+}
+
+function switchTab(i) {
+  document.querySelectorAll('.lesson-tab').forEach((t, idx) => t.classList.toggle('active', idx === i));
+  document.querySelectorAll('.tab-content').forEach((t, idx) => t.classList.toggle('active', idx === i));
+  currentTab = i;
+  markTabDone(i);
+}
+
+function markTabDone(tabIndex) {
+  const m = MODULES.find(x => x.id === currentModuleId);
+  const p = DB.getProgress(currentUser)[currentModuleId] || {};
+  const tabs = new Set(p.completedTabs || []);
+  tabs.add(tabIndex);
+  DB.setProgress(currentUser, currentModuleId, { completedTabs: [...tabs] });
+  buildSidebar();
+}
+
+// ══════════════════════════════════════════════
+//  EXERCISES
+// ══════════════════════════════════════════════
+const EXERCISE_DATA = {
+  intro: {
+    1: { correct: ['haiku', 'sonnet', 'opus'], hint: 'Think: speed order — what goes fastest to most capable?' },
+    2: { isOpen: true }
+  },
+  cli: {
+    1: { correct: ['npm install -g @anthropic-ai/claude-code'], hint: 'It\'s a global npm install (-g flag) of the @anthropic-ai/claude-code package.' },
+    2: { correct: ['cat errors.log | claude'], hint: 'Use cat to output the file, then pipe (|) it to claude with your question in quotes.' },
+    3: { correct: ['/compact'], hint: 'There\'s a slash command that compresses/compacts the conversation...' }
+  },
+  claudemd: {
+    1: { isOpen: true, feedback: '✓ Well done! Great CLAUDE.md rules use directive language (ALWAYS/NEVER), are specific, and cover error handling, naming, async patterns, and security.' },
+    2: { correct: ['false'], hint: 'CLAUDE.md is loaded fresh every session — it\'s read from disk each time Claude Code starts.' }
+  },
+  modes: {
+    1: { correct: ['plan'], hint: 'Which mode shows you what will happen BEFORE it happens, letting you approve or reject?' },
+    2: { isOpen: true, feedback: '✓ A good Loop Mode command includes a specific goal ("Fix all failing tests") and a clear stopping condition ("until they all pass").' }
+  },
+  mcp: {
+    1: { isOpen: true, feedback: '✓ Good! You\'d need a Shopify MCP server (or custom HTTP MCP) + Airtable MCP. Claude\'s task would be: "Fetch all orders from Shopify created in the last hour and create corresponding records in the VenzAura Airtable base."' },
+    2: { correct: ['type', 'url', 'headers', 'authorization', 'bearer'], hint: 'Use "type": "url", include the URL field, and add headers with Authorization: Bearer YOUR_TOKEN.' }
+  },
+  agents: {
+    1: { isOpen: true, feedback: '✓ Excellent design! Orchestrator splits 200 tickets into 10 batches of 20. 10 worker agents process in parallel (categorize + sentiment per ticket). Synthesizer aggregates and counts top issues.' },
+    2: { correct: ['cheap', 'fast', 'cost', 'haiku', 'repetitive', 'parallel'], hint: 'Think about what each tier is optimized for, and what "repetitive" tasks workers do.' }
+  },
+  git: {
+    1: { correct: ['git diff --staged | claude'], hint: 'You need git diff with the --staged flag, then pipe to claude with a conventional commit message request.' },
+    2: { isOpen: true, feedback: '✓ Solid CI design! Steps: 1) Checkout with full history, 2) Install Claude Code, 3) Run npm test (record result), 4) Pipe git diff to Claude for review, 5) Parse Claude output for SECURITY: CRITICAL, 6) Post comment to PR, 7) Fail workflow if critical issues found.' }
+  }
+};
+
+function checkExercise(moduleId, num) {
+  const data = EXERCISE_DATA[moduleId]?.[num];
+  const input = document.getElementById(`ex-${moduleId}-${num}`);
+  const result = document.getElementById(`ex-result-${moduleId}-${num}`);
+  if (!input || !result || !data) return;
+  
+  const val = input.value.trim().toLowerCase();
+  if (!val) { result.className = 'exercise-result hint'; result.textContent = '⚠ Please type an answer first.'; return; }
+
+  if (data.isOpen) {
+    result.className = 'exercise-result success';
+    result.textContent = data.feedback || '✓ Answer submitted! Open-ended exercises help you think — compare your answer to the lesson content.';
+    awardExercise();
+  } else {
+    const correct = data.correct.some(c => val.includes(c.toLowerCase()));
+    if (correct) {
+      result.className = 'exercise-result success';
+      result.textContent = '✓ Correct! Well done.';
+      awardExercise();
+    } else {
+      result.className = 'exercise-result hint';
+      result.textContent = '✗ Not quite. Try the hint if you\'re stuck!';
+    }
+  }
+}
+
+function showHint(moduleId, num) {
+  const data = EXERCISE_DATA[moduleId]?.[num];
+  const result = document.getElementById(`ex-result-${moduleId}-${num}`);
+  if (!data || !result) return;
+  result.className = 'exercise-result hint';
+  result.textContent = '💡 Hint: ' + (data.hint || 'Review the lesson content above.');
+}
+
+function awardExercise() {
+  DB.addExercise(currentUser);
+  DB.addXP(currentUser, 10);
+  updateTopStats();
+  showToast('💪', '+10 XP — Exercise complete!');
+}
+
+// ══════════════════════════════════════════════
+//  QUIZ ENGINE
+// ══════════════════════════════════════════════
+function renderQuiz(m) {
+  const container = document.getElementById(`quiz-${m.id}`);
+  if (!container) return;
+  
+  let qIdx = 0;
+  let score = 0;
+  let answered = [];
+  
+  function renderQ() {
+    if (qIdx >= m.quiz.length) {
+      const pct = Math.round((score / m.quiz.length) * 100);
+      container.innerHTML = `
+        <div class="quiz-score">
+          <div class="quiz-score-num">${pct}%</div>
+          <div class="quiz-score-label">You got ${score}/${m.quiz.length} correct</div>
+          ${pct >= 67 ? `<div style="margin-top:16px;color:var(--success);font-weight:600">✓ Quiz passed! Head to Complete to claim your XP.</div>` : `<div style="margin-top:16px;color:var(--warning)">Review the lesson and try the quiz again.</div>`}
+          <button class="btn-secondary" style="margin-top:20px" onclick="retryQuiz('${m.id}')">Retry Quiz</button>
+        </div>`;
+      if (pct >= 67) { DB.addXP(currentUser, 25); updateTopStats(); showToast('🎯', '+25 XP — Quiz passed!'); }
+      return;
+    }
+    
+    const q = m.quiz[qIdx];
+    container.innerHTML = `
+      <div class="quiz-question">Question ${qIdx + 1} of ${m.quiz.length}: ${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((opt, i) => `<div class="quiz-option" id="qopt-${i}" onclick="answerQuiz(${i}, ${q.correct}, '${m.id}', ${qIdx})">
+          <div class="quiz-opt-letter">${String.fromCharCode(65 + i)}</div>
+          ${opt}
+        </div>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+    `;
+  }
+  
+  window[`answerQuiz_${m.id}`] = (chosen, correct, mid, qi) => {
+    if (answered.includes(qi)) return;
+    answered.push(qi);
+    const fb = document.getElementById('quiz-fb');
+    document.getElementById(`qopt-${chosen}`).classList.add(chosen === correct ? 'correct' : 'wrong');
+    if (chosen === correct) { score++; document.getElementById(`qopt-${chosen}`).style.borderColor = 'var(--success)'; }
+    else { document.getElementById(`qopt-${correct}`).classList.add('correct'); }
+    fb.style.display = 'block';
+    fb.className = `quiz-feedback ${chosen === correct ? 'success' : 'hint'}`;
+    fb.style.background = chosen === correct ? 'rgba(34,211,165,0.08)' : 'rgba(245,158,11,0.08)';
+    fb.style.border = chosen === correct ? '1px solid rgba(34,211,165,0.3)' : '1px solid rgba(245,158,11,0.3)';
+    fb.style.color = chosen === correct ? 'var(--success)' : 'var(--warning)';
+    fb.style.padding = '14px';
+    fb.style.borderRadius = '10px';
+    fb.style.fontSize = '14px';
+    fb.style.lineHeight = '1.7';
+    fb.textContent = (chosen === correct ? '✓ Correct! ' : '✗ Incorrect. ') + m.quiz[qi].exp;
+    setTimeout(() => { qIdx++; renderQ(); }, 2000);
+  };
+  
+  window.answerQuiz = (chosen, correct, mid, qi) => window[`answerQuiz_${mid}`]?.(chosen, correct, mid, qi);
+  window[`retryQuiz_fn_${m.id}`] = () => { qIdx = 0; score = 0; answered = []; renderQ(); };
+  window.retryQuiz = (mid) => window[`retryQuiz_fn_${mid}`]?.();
+  
+  renderQ();
+}
+
+// ══════════════════════════════════════════════
+//  MODULE COMPLETION
+// ══════════════════════════════════════════════
+window.completeModule = function(id) {
+  const m = MODULES.find(x => x.id === id);
+  if (!m) return;
+  const p = DB.getProgress(currentUser)[id] || {};
+  if (!p.completed) {
+    DB.setProgress(currentUser, id, { completed: true, completedAt: new Date().toISOString() });
+    DB.addXP(currentUser, m.xp);
+    updateTopStats();
+    buildSidebar();
+    showToast('🏆', `+${m.xp} XP — ${m.name} complete!`);
+  }
+};
+
+// Auto-complete when reaching the Complete tab
+const originalSwitchTab = window.switchTab;
+window.switchTab = function(i) {
+  const m = MODULES.find(x => x.id === currentModuleId);
+  const tabs = Object.keys(m.content);
+  if (tabs[i] === 'complete') { completeModule(currentModuleId); }
+  document.querySelectorAll('.lesson-tab').forEach((t, idx) => t.classList.toggle('active', idx === i));
+  document.querySelectorAll('.tab-content').forEach((t, idx) => t.classList.toggle('active', idx === i));
+  currentTab = i;
+  markTabDone(i);
+};
+
+// ══════════════════════════════════════════════
+//  CERTIFICATE
+// ══════════════════════════════════════════════
+window.showCertificate = function() {
+  completeModule('git');
+  const stats = DB.getStats(currentUser);
+  const u = DB.getUserData(currentUser);
+  document.getElementById('lesson-container').innerHTML = `
+    <div class="lesson-body">
+      <div class="completion-card" style="max-width:600px;margin:0 auto">
+        <span class="completion-icon">🏆</span>
+        <div class="completion-title" style="font-size:36px">Claude Mastery Certified!</div>
+        <div style="color:var(--text-muted);margin:12px 0 20px;font-size:16px">Awarded to</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;color:var(--accent-claude)">${u?.name || 'Learner'}</div>
+        <div style="color:var(--text-muted);font-size:13px;margin-top:8px">${new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'})}</div>
+        <div class="completion-xp" style="margin:24px 0">⚡ ${stats.xp} Total XP Earned</div>
+        <div class="key-learnings">
+          <h4>Competencies Certified</h4>
+          <div class="key-item">Claude CLI (Claude Code) — Installation, commands, workflows</div>
+          <div class="key-item">CLAUDE.md — Persistent project context and team conventions</div>
+          <div class="key-item">Plan & Loop Modes — Controlling AI autonomy</div>
+          <div class="key-item">MCP Servers — Connecting Claude to external tools and APIs</div>
+          <div class="key-item">Parallel Sub-Agents — Multi-agent orchestration patterns</div>
+          <div class="key-item">Git Integration — Automated PR review and CI/CD workflows</div>
+        </div>
+        <div style="margin-top:24px;color:var(--text-muted);font-size:13px">Share your achievement:</div>
+        <button class="btn-primary" style="margin-top:10px" onclick="navigator.clipboard.writeText('I just completed Claude Mastery certification! Learned Claude CLI, MCP servers, multi-agent orchestration, and Git automation. #ClaudeMastery').then(()=>showToast('📋','Copied to clipboard!'))">Copy Achievement Text</button>
+      </div>
+    </div>`;
+};
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function showToast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Enter on password fields
+  ['login-pass', 'reg-pass'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') { id === 'login-pass' ? doLogin() : doRegister(); } });
+  });
+  
+  // Check for existing session
+  const session = DB.getSession();
+  if (session) { launchApp(session.email, session.name); }
+});
+</script>
+</body>
+</html>
