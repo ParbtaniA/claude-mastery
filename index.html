@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Claude Mastery — Learn Claude From Zero</title>
+<title>Claude Mastery &mdash; Learn Claude From Zero</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1004,7 +1004,7 @@ body {
 
 <script>
 // ══════════════════════════════════════════════
-//  DATA LAYER (localStorage — swap for Supabase)
+//  DATA LAYER (localStorage &mdash; swap for Supabase)
 // ══════════════════════════════════════════════
 const DB = {
   getUsers: () => JSON.parse(localStorage.getItem('cm_users') || '{}'),
@@ -1071,24 +1071,24 @@ const MODULES = [
     id: 'intro',
     icon: '🤖',
     name: 'What is Claude?',
-    subtitle: 'Foundation · 5 min',
+    subtitle: 'Foundation &middot; 5 min',
     xp: 50,
     color: '#CC785C',
-    eyebrow: 'Module 1 · Foundation',
+    eyebrow: 'Module 1 &middot; Foundation',
     title: 'Meet Claude',
-    desc: 'Before you touch a single command, you need to understand what Claude actually is — not the chatbot version you see on claude.ai, but the underlying model and API that powers everything else.',
+    desc: 'Before you touch a single command, you need to understand what Claude actually is &mdash; not the chatbot version you see on claude.ai, but the underlying model and API that powers everything else.',
     tabs: ['Concept', 'Demo', 'Exercise', 'Quiz', 'Complete'],
     content: {
       concept: `
         <div class="concept-block">
           <h3>Claude is an API, not just a chatbot</h3>
-          <p>Most people first encounter Claude at claude.ai — a polished chat interface. But that's just one surface. Under the hood, Claude is a large language model (LLM) made by Anthropic, accessible via API. That API is what powers everything: the CLI, MCP servers, autonomous agents, code editors, and the claude.ai UI itself.</p>
-          <div class="highlight-box"><strong>Key insight:</strong> claude.ai is a client. The Claude API is the product. When you learn Claude "properly," you're learning to use the API directly — which gives you 10× more power than the chat UI.</div>
+          <p>Most people first encounter Claude at claude.ai &mdash; a polished chat interface. But that's just one surface. Under the hood, Claude is a large language model (LLM) made by Anthropic, accessible via API. That API is what powers everything: the CLI, MCP servers, autonomous agents, code editors, and the claude.ai UI itself.</p>
+          <div class="highlight-box"><strong>Key insight:</strong> claude.ai is a client. The Claude API is the product. When you learn Claude "properly," you're learning to use the API directly &mdash; which gives you 10× more power than the chat UI.</div>
           <ul>
             <li>Claude is created by Anthropic, an AI safety company founded in 2021</li>
             <li>It uses a "Constitutional AI" training method that bakes in helpful, harmless, and honest behavior</li>
             <li>The API accepts messages and returns structured responses</li>
-            <li>Claude has a context window — think of it as working memory — currently up to 200K tokens</li>
+            <li>Claude has a context window &mdash; think of it as working memory &mdash; currently up to 200K tokens</li>
             <li>Different model tiers exist: Haiku (fast/cheap), Sonnet (balanced), Opus (powerful)</li>
           </ul>
         </div>
@@ -1098,12 +1098,12 @@ const MODULES = [
           <div class="terminal">
             <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Model Lineup</span></div>
             <div class="terminal-body">
-<span class="t-type">claude-haiku-4</span>     <span class="t-comment">→ Fastest, cheapest — great for quick tasks</span>
-<span class="t-type">claude-sonnet-4-6</span>  <span class="t-comment">→ Balanced power + speed — your daily driver</span>
-<span class="t-type">claude-opus-4</span>      <span class="t-comment">→ Most capable — complex reasoning tasks</span>
+<span class="t-type">claude-haiku-4</span>     <span class="t-comment">→ Fastest, cheapest &mdash; great for quick tasks</span>
+<span class="t-type">claude-sonnet-4-6</span>  <span class="t-comment">→ Balanced power + speed &mdash; your daily driver</span>
+<span class="t-type">claude-opus-4</span>      <span class="t-comment">→ Most capable &mdash; complex reasoning tasks</span>
             </div>
           </div>
-          <p>For most of this course, we use <strong>Sonnet</strong> — it's the sweet spot for real-world work.</p>
+          <p>For most of this course, we use <strong>Sonnet</strong> &mdash; it's the sweet spot for real-world work.</p>
         </div>
         <div class="callout">
           <div class="callout-icon">💡</div>
@@ -1112,7 +1112,7 @@ const MODULES = [
       demo: `
         <div class="concept-block">
           <h3>Your First API Call (Conceptually)</h3>
-          <p>Here's what's happening every time Claude responds to anything — whether it's claude.ai, Claude Code, or your own app:</p>
+          <p>Here's what's happening every time Claude responds to anything &mdash; whether it's claude.ai, Claude Code, or your own app:</p>
         </div>
         <div class="diagram-wrap">
           <div class="diagram-title">How Every Claude Interaction Works</div>
@@ -1127,7 +1127,7 @@ const MODULES = [
           </div>
         </div>
         <div class="terminal">
-          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Raw API Call — What claude.ai does behind the scenes</span></div>
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Raw API Call &mdash; What claude.ai does behind the scenes</span></div>
           <div class="terminal-body">
 <span class="t-comment"># This is what every Claude interaction looks like under the hood:</span>
 <span class="t-out">POST</span> <span class="t-string">https://api.anthropic.com/v1/messages</span>
@@ -1152,9 +1152,9 @@ const MODULES = [
         <div class="concept-block">
           <h3>The Three Things Claude Can Return</h3>
           <ul>
-            <li><strong>Text</strong> — Plain language responses, explanations, code</li>
-            <li><strong>Tool calls</strong> — Structured requests to use external tools (like "search the web", "write a file")</li>
-            <li><strong>Documents/Images</strong> — When processing files you send it</li>
+            <li><strong>Text</strong> &mdash; Plain language responses, explanations, code</li>
+            <li><strong>Tool calls</strong> &mdash; Structured requests to use external tools (like "search the web", "write a file")</li>
+            <li><strong>Documents/Images</strong> &mdash; When processing files you send it</li>
           </ul>
           <p>Everything you'll learn in this course builds on this simple foundation: send messages, get responses, act on them.</p>
         </div>`,
@@ -1197,49 +1197,49 @@ const MODULES = [
           <div class="completion-xp">⚡ +50 XP Earned</div>
           <div class="key-learnings">
             <h4>Key Learnings</h4>
-            <div class="key-item">Claude is an API, not just a chatbot — claude.ai is a client that uses it</div>
+            <div class="key-item">Claude is an API, not just a chatbot &mdash; claude.ai is a client that uses it</div>
             <div class="key-item">Three model tiers: Haiku (fast) → Sonnet (balanced) → Opus (powerful)</div>
             <div class="key-item">Every Claude interaction is a /v1/messages API call under the hood</div>
             <div class="key-item">Responses can be text, tool calls, or processed documents</div>
-            <div class="key-item">Context window = Claude's working memory — up to 200K tokens</div>
+            <div class="key-item">Context window = Claude's working memory &mdash; up to 200K tokens</div>
           </div>
           <button class="next-btn" onclick="goToModule('cli')">Next: Claude CLI →</button>
         </div>`
     },
     quiz: [
       { q: 'What company makes Claude?', opts: ['OpenAI', 'Google', 'Anthropic', 'Meta'], correct: 2, exp: 'Claude is made by Anthropic, an AI safety company founded in 2021 by former OpenAI researchers.' },
-      { q: 'Which Claude model tier is the fastest and cheapest?', opts: ['Opus', 'Sonnet', 'Haiku', 'Titan'], correct: 2, exp: 'Haiku is the fastest and cheapest tier — ideal for quick, lightweight tasks.' },
-      { q: 'What does claude.ai represent in the Claude ecosystem?', opts: ['The underlying model', 'A client that uses the Claude API', 'An Anthropic server', 'A different AI entirely'], correct: 1, exp: 'claude.ai is just a client — a polished UI that calls the same Claude API you can access directly.' },
+      { q: 'Which Claude model tier is the fastest and cheapest?', opts: ['Opus', 'Sonnet', 'Haiku', 'Titan'], correct: 2, exp: 'Haiku is the fastest and cheapest tier &mdash; ideal for quick, lightweight tasks.' },
+      { q: 'What does claude.ai represent in the Claude ecosystem?', opts: ['The underlying model', 'A client that uses the Claude API', 'An Anthropic server', 'A different AI entirely'], correct: 1, exp: 'claude.ai is just a client &mdash; a polished UI that calls the same Claude API you can access directly.' },
     ]
   },
   {
     id: 'cli',
     icon: '⌨️',
     name: 'Claude CLI',
-    subtitle: 'Setup · 15 min',
+    subtitle: 'Setup &middot; 15 min',
     xp: 100,
     color: '#7C3AED',
-    eyebrow: 'Module 2 · CLI',
+    eyebrow: 'Module 2 &middot; CLI',
     title: 'Claude in Your Terminal',
-    desc: 'Claude Code is a command-line interface that brings Claude directly into your development workflow. You run it in your terminal, it reads your codebase, and it can execute code, write files, run tests — all autonomously.',
+    desc: 'Claude Code is a command-line interface that brings Claude directly into your development workflow. You run it in your terminal, it reads your codebase, and it can execute code, write files, run tests &mdash; all autonomously.',
     tabs: ['Concept', 'Install', 'Commands', 'Exercise', 'Quiz', 'Complete'],
     content: {
       concept: `
         <div class="concept-block">
           <h3>What is Claude Code (CLI)?</h3>
           <p>Claude Code is Anthropic's official CLI tool. Unlike using claude.ai in a browser, the CLI runs <em>inside your terminal</em>, which means it has direct access to your file system, can run bash commands, read entire codebases, and act as an autonomous coding agent.</p>
-          <div class="highlight-box"><strong>Think of it this way:</strong> claude.ai is like talking to a consultant on the phone. Claude CLI is like having that consultant <em>sitting at your computer</em> — they can actually open files, run commands, and make changes.</div>
+          <div class="highlight-box"><strong>Think of it this way:</strong> claude.ai is like talking to a consultant on the phone. Claude CLI is like having that consultant <em>sitting at your computer</em> &mdash; they can actually open files, run commands, and make changes.</div>
           <ul>
             <li>Reads your entire project directory for context</li>
             <li>Executes shell commands, Python scripts, npm/pip installs</li>
             <li>Creates, edits, and deletes files with your permission</li>
             <li>Uses tools: bash, text editor, web fetch, and more</li>
-            <li>Supports "agentic" mode — runs tasks autonomously until complete</li>
+            <li>Supports "agentic" mode &mdash; runs tasks autonomously until complete</li>
             <li>CLAUDE.md file gives it persistent context about your project</li>
           </ul>
         </div>
         <div class="concept-block">
-          <h3>CLI vs claude.ai — When to Use Which</h3>
+          <h3>CLI vs claude.ai &mdash; When to Use Which</h3>
           <div class="terminal">
             <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Decision Matrix</span></div>
             <div class="terminal-body">
@@ -1321,7 +1321,7 @@ const MODULES = [
           <div class="terminal-body">
 <span class="t-comment">── LAUNCH MODES ──────────────────────────</span>
 
-<span class="t-comment"># Interactive mode (REPL — most common)</span>
+<span class="t-comment"># Interactive mode (REPL &mdash; most common)</span>
 <span class="t-prompt">$ </span><span class="t-cmd">claude</span>
 
 <span class="t-comment"># One-shot mode (run a task and exit)</span>
@@ -1414,10 +1414,10 @@ const MODULES = [
           <div class="completion-xp">⚡ +100 XP Earned</div>
           <div class="key-learnings">
             <h4>Key Learnings</h4>
-            <div class="key-item">Claude CLI = Claude Code — install with npm install -g @anthropic-ai/claude-code</div>
-            <div class="key-item">Needs ANTHROPIC_API_KEY env var set — get it from console.anthropic.com</div>
+            <div class="key-item">Claude CLI = Claude Code &mdash; install with npm install -g @anthropic-ai/claude-code</div>
+            <div class="key-item">Needs ANTHROPIC_API_KEY env var set &mdash; get it from console.anthropic.com</div>
             <div class="key-item">Interactive mode (just run <code>claude</code>) vs one-shot mode (claude "your task")</div>
-            <div class="key-item">/compact is your friend when context fills up — it summarizes and compresses</div>
+            <div class="key-item">/compact is your friend when context fills up &mdash; it summarizes and compresses</div>
             <div class="key-item">Pipe Unix commands into Claude with | for powerful automation patterns</div>
           </div>
           <button class="next-btn" onclick="goToModule('claudemd')">Next: CLAUDE.md →</button>
@@ -1425,7 +1425,7 @@ const MODULES = [
     },
     quiz: [
       { q: 'What Node.js version is required minimum for Claude Code?', opts: ['14+', '16+', '18+', '20+'], correct: 2, exp: 'Claude Code requires Node.js 18 or higher to run.' },
-      { q: 'Which slash command compresses a long conversation context?', opts: ['/shrink', '/compact', '/clear', '/reset'], correct: 1, exp: '/compact summarizes and compresses your conversation — useful when the context window gets large.' },
+      { q: 'Which slash command compresses a long conversation context?', opts: ['/shrink', '/compact', '/clear', '/reset'], correct: 1, exp: '/compact summarizes and compresses your conversation &mdash; useful when the context window gets large.' },
       { q: 'How do you run Claude on a specific file without entering interactive mode?', opts: ['claude --file app.js', 'cat app.js | claude "your question"', 'claude read app.js', 'claude -f app.js'], correct: 1, exp: 'You pipe the file content using unix pipes: cat app.js | claude "your question here"' },
     ]
   },
@@ -1433,36 +1433,36 @@ const MODULES = [
     id: 'claudemd',
     icon: '📋',
     name: 'CLAUDE.md',
-    subtitle: 'Context · 10 min',
+    subtitle: 'Context &middot; 10 min',
     xp: 100,
     color: '#22D3A5',
-    eyebrow: 'Module 3 · Memory',
+    eyebrow: 'Module 3 &middot; Memory',
     title: 'Persistent Project Context',
-    desc: 'CLAUDE.md is a special Markdown file that Claude reads automatically when it starts in your project directory. It gives Claude permanent memory of your codebase conventions, team rules, and project context — without you having to repeat it every session.',
+    desc: 'CLAUDE.md is a special Markdown file that Claude reads automatically when it starts in your project directory. It gives Claude permanent memory of your codebase conventions, team rules, and project context &mdash; without you having to repeat it every session.',
     tabs: ['Concept', 'Structure', 'Exercise', 'Quiz', 'Complete'],
     content: {
       concept: `
         <div class="concept-block">
           <h3>The Problem CLAUDE.md Solves</h3>
-          <p>Without CLAUDE.md, every time you start a Claude session you'd have to re-explain: "We use TypeScript. Our API is at /api/v2. Never use var. We use Tailwind not CSS modules. Tests go in __tests__/ ..." — tedious and easy to forget.</p>
+          <p>Without CLAUDE.md, every time you start a Claude session you'd have to re-explain: "We use TypeScript. Our API is at /api/v2. Never use var. We use Tailwind not CSS modules. Tests go in __tests__/ ..." &mdash; tedious and easy to forget.</p>
           <p>CLAUDE.md is Claude's long-term memory for your project. It's version-controlled with your code, shared with your team, and automatically loaded every single session.</p>
           <div class="highlight-box"><strong>CLAUDE.md = Project constitution.</strong> It encodes every convention, constraint, and context point your team would otherwise repeat in every prompt.</div>
           <ul>
             <li>Auto-loaded by Claude Code when it starts in a directory</li>
-            <li>Supports nested CLAUDE.md files — one per subdirectory if needed</li>
+            <li>Supports nested CLAUDE.md files &mdash; one per subdirectory if needed</li>
             <li>Version-controlled with your codebase (commit it!)</li>
-            <li>Works with system prompts — not a replacement, a complement</li>
+            <li>Works with system prompts &mdash; not a replacement, a complement</li>
             <li>Can reference other files with @file syntax</li>
           </ul>
         </div>
         <div class="callout">
           <div class="callout-icon">⚡</div>
-          <div class="callout-text"><strong>Pro pattern from Ayaz's projects:</strong> On VenzAura Ops, a CLAUDE.md at the repo root includes the Supabase schema overview, naming conventions, and the rule "always use Row Level Security — never bypass it." Claude never gets this wrong now.</div>
+          <div class="callout-text"><strong>Pro pattern from Ayaz's projects:</strong> On VenzAura Ops, a CLAUDE.md at the repo root includes the Supabase schema overview, naming conventions, and the rule "always use Row Level Security &mdash; never bypass it." Claude never gets this wrong now.</div>
         </div>`,
       Structure: `
         <div class="concept-block">
           <h3>Anatomy of a Great CLAUDE.md</h3>
-          <p>Here's a real-world example CLAUDE.md — notice how it's not just documentation, it's directive:</p>
+          <p>Here's a real-world example CLAUDE.md &mdash; notice how it's not just documentation, it's directive:</p>
         </div>
         <div class="code-block">
           <span class="code-label">CLAUDE.md</span>
@@ -1475,9 +1475,9 @@ const MODULES = [
 - Shadcn/ui for components
 
 <span class="t-type">## Coding Rules</span>
-- NEVER use <span class="t-err">var</span> — only const/let
+- NEVER use <span class="t-err">var</span> &mdash; only const/let
 - ALL database queries must go through Supabase client, never raw SQL
-- ALWAYS enable Row Level Security — never bypass with service role in client code
+- ALWAYS enable Row Level Security &mdash; never bypass with service role in client code
 - Components go in <span class="t-flag">src/components/</span>, pages in <span class="t-flag">src/app/</span>
 - Naming: PascalCase for components, camelCase for functions
 
@@ -1487,8 +1487,8 @@ const MODULES = [
 - All currency in USD, 2 decimal places
 
 <span class="t-type">## Common Commands</span>
-- <span class="t-cmd">npm run dev</span> — local development
-- <span class="t-cmd">netlify deploy --prod</span> — production deploy
+- <span class="t-cmd">npm run dev</span> &mdash; local development
+- <span class="t-cmd">netlify deploy --prod</span> &mdash; production deploy
 
 <span class="t-type">## Things To Never Do</span>
 - Never commit .env files
@@ -1512,7 +1512,7 @@ const MODULES = [
 └── docs/
             </div>
           </div>
-          <p>When you run Claude from <code>backend/</code>, it loads <strong>both</strong> the root CLAUDE.md and backend/CLAUDE.md — giving you layered context.</p>
+          <p>When you run Claude from <code>backend/</code>, it loads <strong>both</strong> the root CLAUDE.md and backend/CLAUDE.md &mdash; giving you layered context.</p>
         </div>`,
       exercise: `
         <div class="exercise-area">
@@ -1545,10 +1545,10 @@ const MODULES = [
           <div class="completion-xp">⚡ +100 XP Earned</div>
           <div class="key-learnings">
             <h4>Key Learnings</h4>
-            <div class="key-item">CLAUDE.md is auto-loaded every Claude Code session — it's Claude's project memory</div>
+            <div class="key-item">CLAUDE.md is auto-loaded every Claude Code session &mdash; it's Claude's project memory</div>
             <div class="key-item">Write rules directively: "ALWAYS use async/await, NEVER use callbacks"</div>
-            <div class="key-item">Version control your CLAUDE.md — it belongs in git with your code</div>
-            <div class="key-item">Nested CLAUDE.md files stack — root + subdirectory rules both load</div>
+            <div class="key-item">Version control your CLAUDE.md &mdash; it belongs in git with your code</div>
+            <div class="key-item">Nested CLAUDE.md files stack &mdash; root + subdirectory rules both load</div>
             <div class="key-item">Include: stack, coding rules, architecture, commands, and things to never do</div>
           </div>
           <button class="next-btn" onclick="goToModule('modes')">Next: Plan & Loop Modes →</button>
@@ -1563,12 +1563,12 @@ const MODULES = [
     id: 'modes',
     icon: '🔄',
     name: 'Plan & Loop Modes',
-    subtitle: 'Control · 12 min',
+    subtitle: 'Control &middot; 12 min',
     xp: 100,
     color: '#F59E0B',
-    eyebrow: 'Module 4 · Control Flow',
+    eyebrow: 'Module 4 &middot; Control Flow',
     title: 'How Claude Thinks & Acts',
-    desc: 'Claude Code has different operating modes that change how much autonomy it takes. Understanding Plan Mode and Loop Mode lets you control exactly when Claude acts vs when it asks — the difference between a tool and an agent.',
+    desc: 'Claude Code has different operating modes that change how much autonomy it takes. Understanding Plan Mode and Loop Mode lets you control exactly when Claude acts vs when it asks &mdash; the difference between a tool and an agent.',
     tabs: ['Concept', 'Plan Mode', 'Loop Mode', 'Exercise', 'Quiz', 'Complete'],
     content: {
       concept: `
@@ -1588,7 +1588,7 @@ const MODULES = [
             </div>
           </div>
           <ul>
-            <li><strong>No tools:</strong> Claude only responds with text — no file writes, no commands</li>
+            <li><strong>No tools:</strong> Claude only responds with text &mdash; no file writes, no commands</li>
             <li><strong>Plan Mode:</strong> Claude shows you what it WOULD do, then waits for approval</li>
             <li><strong>Default:</strong> Claude asks before each significant action (safe but slower)</li>
             <li><strong>Loop Mode:</strong> Claude runs autonomously, retrying and looping until task is complete</li>
@@ -1596,16 +1596,16 @@ const MODULES = [
         </div>`,
       'Plan Mode': `
         <div class="concept-block">
-          <h3>Plan Mode — See Before You Approve</h3>
-          <p>Plan Mode is like asking a contractor for a quote before they start work. Claude reads your codebase, thinks through the task, and presents a step-by-step plan — you approve or modify it before a single file is touched.</p>
-          <div class="highlight-box"><strong>When to use Plan Mode:</strong> Any time the task involves many file changes, refactoring, or you're unsure what Claude will do. It's essentially free — no tokens wasted on actual execution until you approve.</div>
+          <h3>Plan Mode &mdash; See Before You Approve</h3>
+          <p>Plan Mode is like asking a contractor for a quote before they start work. Claude reads your codebase, thinks through the task, and presents a step-by-step plan &mdash; you approve or modify it before a single file is touched.</p>
+          <div class="highlight-box"><strong>When to use Plan Mode:</strong> Any time the task involves many file changes, refactoring, or you're unsure what Claude will do. It's essentially free &mdash; no tokens wasted on actual execution until you approve.</div>
         </div>
         <div class="terminal">
           <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Plan Mode in Action</span></div>
           <div class="terminal-body">
 <span class="t-prompt">$ </span><span class="t-cmd">claude --plan "Migrate our codebase from React class components to hooks"</span>
 
-<span class="t-type">◆ PLAN — Pending your approval</span>
+<span class="t-type">◆ PLAN &mdash; Pending your approval</span>
 <span class="t-out">──────────────────────────────────────────</span>
 <span class="t-out">I analyzed 23 files. Here's what I'll do:</span>
 
@@ -1626,17 +1626,17 @@ const MODULES = [
         </div>
         <div class="concept-block">
           <h3>Modifying a Plan</h3>
-          <p>You can say "modify" and tell Claude to adjust the plan — maybe exclude certain files, change the approach, or add steps — before execution begins. This is the killer feature of Plan Mode.</p>
+          <p>You can say "modify" and tell Claude to adjust the plan &mdash; maybe exclude certain files, change the approach, or add steps &mdash; before execution begins. This is the killer feature of Plan Mode.</p>
         </div>`,
       'Loop Mode': `
         <div class="concept-block">
-          <h3>Loop Mode — Set It and Let It Run</h3>
-          <p>Loop Mode means Claude keeps going until the task is done — it runs, checks results, fixes errors, and retries autonomously. This is true agentic behavior.</p>
+          <h3>Loop Mode &mdash; Set It and Let It Run</h3>
+          <p>Loop Mode means Claude keeps going until the task is done &mdash; it runs, checks results, fixes errors, and retries autonomously. This is true agentic behavior.</p>
           <p>The "loop" refers to the agent loop: Claude takes an action → observes the result → decides next action → repeats until the goal is achieved.</p>
           <div class="highlight-box"><strong>Classic loop pattern:</strong> Claude writes code → runs tests → tests fail → Claude reads error → fixes code → runs tests again → until all tests pass. No human needed in the middle.</div>
         </div>
         <div class="terminal">
-          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Loop Mode — Autonomous Test-Fix Cycle</span></div>
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">Loop Mode &mdash; Autonomous Test-Fix Cycle</span></div>
           <div class="terminal-body">
 <span class="t-prompt">$ </span><span class="t-cmd">claude "Fix all failing tests. Keep running them until they all pass."</span>
 
@@ -1696,7 +1696,7 @@ const MODULES = [
           <div class="completion-xp">⚡ +100 XP Earned</div>
           <div class="key-learnings">
             <h4>Key Learnings</h4>
-            <div class="key-item">Plan Mode shows you what Claude will do BEFORE it does it — free preview</div>
+            <div class="key-item">Plan Mode shows you what Claude will do BEFORE it does it &mdash; free preview</div>
             <div class="key-item">Loop Mode is the agent loop: act → observe → decide → repeat until done</div>
             <div class="key-item">Always give Loop Mode a clear stopping criterion to prevent infinite loops</div>
             <div class="key-item">For risky/broad changes: Plan Mode first, then approve before execution</div>
@@ -1714,20 +1714,20 @@ const MODULES = [
     id: 'mcp',
     icon: '🔌',
     name: 'MCP Servers',
-    subtitle: 'Extensions · 15 min',
+    subtitle: 'Extensions &middot; 15 min',
     xp: 150,
     color: '#CC785C',
-    eyebrow: 'Module 5 · Integrations',
+    eyebrow: 'Module 5 &middot; Integrations',
     title: 'Model Context Protocol',
-    desc: 'MCP (Model Context Protocol) is the open standard that lets Claude connect to external tools, APIs, and data sources. Instead of Claude only knowing what's in its context window, MCP gives it real superpowers — search, databases, file systems, third-party APIs.',
+    desc: 'MCP (Model Context Protocol) is the open standard that lets Claude connect to external tools, APIs, and data sources. Instead of Claude only knowing what\'s in its context window, MCP gives it real superpowers &mdash; search, databases, file systems, third-party APIs.',
     tabs: ['Concept', 'Architecture', 'Setup', 'Exercise', 'Quiz', 'Complete'],
     content: {
       concept: `
         <div class="concept-block">
           <h3>What is MCP?</h3>
-          <p>MCP stands for Model Context Protocol. It's an open standard (published by Anthropic) that defines how AI models connect to external tools and data sources. Think of it like USB — a standard plug that lets Claude connect to anything.</p>
+          <p>MCP stands for Model Context Protocol. It's an open standard (published by Anthropic) that defines how AI models connect to external tools and data sources. Think of it like USB &mdash; a standard plug that lets Claude connect to anything.</p>
           <p>Before MCP: you had to manually copy-paste web search results, database exports, or API responses into your Claude context. After MCP: Claude calls these things itself, in real time, autonomously.</p>
-          <div class="highlight-box"><strong>MCP changes Claude from a brain to a brain with hands.</strong> It can now reach out and interact with the world — not just reason about information you give it.</div>
+          <div class="highlight-box"><strong>MCP changes Claude from a brain to a brain with hands.</strong> It can now reach out and interact with the world &mdash; not just reason about information you give it.</div>
           <ul>
             <li>MCP servers expose <strong>tools</strong> (functions Claude can call), <strong>resources</strong> (data Claude can read), and <strong>prompts</strong> (templates)</li>
             <li>You can connect multiple MCP servers simultaneously</li>
@@ -1781,12 +1781,12 @@ const MODULES = [
           <p>MCP servers are configured in Claude Code's settings file. Here's how to add them:</p>
         </div>
         <div class="terminal">
-          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">~/.claude/settings.json — MCP Configuration</span></div>
+          <div class="terminal-bar"><div class="terminal-dots"><span class="td-r"></span><span class="td-y"></span><span class="td-g"></span></div><span class="terminal-title">~/.claude/settings.json &mdash; MCP Configuration</span></div>
           <div class="terminal-body">
 <span class="t-type">{</span>
   <span class="t-flag">"mcpServers"</span>: {
 
-    <span class="t-comment">// Airtable — connect to your bases</span>
+    <span class="t-comment">// Airtable &mdash; connect to your bases</span>
     <span class="t-flag">"airtable"</span>: {
       <span class="t-flag">"type"</span>: <span class="t-string">"url"</span>,
       <span class="t-flag">"url"</span>: <span class="t-string">"https://mcp.airtable.com/mcp"</span>,
@@ -1815,12 +1815,12 @@ const MODULES = [
         <div class="concept-block">
           <h3>Popular MCP Servers to Know</h3>
           <ul>
-            <li><strong>@anthropic/mcp-server-filesystem</strong> — Read/write local files beyond the project dir</li>
-            <li><strong>@modelcontextprotocol/server-github</strong> — Issues, PRs, repos, commits</li>
-            <li><strong>mcp.airtable.com</strong> — Full Airtable access (great for your GEC intranet)</li>
-            <li><strong>@modelcontextprotocol/server-postgres</strong> — Direct SQL against your database</li>
-            <li><strong>@modelcontextprotocol/server-brave-search</strong> — Real-time web search</li>
-            <li><strong>mcp.netlify.app/mcp</strong> — Deploy, manage Netlify sites via Claude</li>
+            <li><strong>@anthropic/mcp-server-filesystem</strong> &mdash; Read/write local files beyond the project dir</li>
+            <li><strong>@modelcontextprotocol/server-github</strong> &mdash; Issues, PRs, repos, commits</li>
+            <li><strong>mcp.airtable.com</strong> &mdash; Full Airtable access (great for your GEC intranet)</li>
+            <li><strong>@modelcontextprotocol/server-postgres</strong> &mdash; Direct SQL against your database</li>
+            <li><strong>@modelcontextprotocol/server-brave-search</strong> &mdash; Real-time web search</li>
+            <li><strong>mcp.netlify.app/mcp</strong> &mdash; Deploy, manage Netlify sites via Claude</li>
           </ul>
         </div>`,
       exercise: `
@@ -1859,13 +1859,13 @@ const MODULES = [
             <div class="key-item">Servers expose tools (functions), resources (data), and prompts (templates)</div>
             <div class="key-item">Configure via ~/.claude/settings.json under "mcpServers"</div>
             <div class="key-item">Two transport types: "url" (remote SSE/HTTP) or "stdio" (local process)</div>
-            <div class="key-item">You can build your own MCP server — great for internal APIs and databases</div>
+            <div class="key-item">You can build your own MCP server &mdash; great for internal APIs and databases</div>
           </div>
           <button class="next-btn" onclick="goToModule('agents')">Next: Parallel Sub-Agents →</button>
         </div>`
     },
     quiz: [
-      { q: 'What does MCP stand for?', opts: ['Multi-Claude Protocol', 'Model Context Protocol', 'Meta Connection Platform', 'Module Configuration Plugin'], correct: 1, exp: 'MCP stands for Model Context Protocol — an open standard for connecting AI models to external tools.' },
+      { q: 'What does MCP stand for?', opts: ['Multi-Claude Protocol', 'Model Context Protocol', 'Meta Connection Platform', 'Module Configuration Plugin'], correct: 1, exp: 'MCP stands for Model Context Protocol &mdash; an open standard for connecting AI models to external tools.' },
       { q: 'Where do you configure MCP servers for Claude Code?', opts: ['CLAUDE.md', 'package.json', '~/.claude/settings.json', '.env file'], correct: 2, exp: 'MCP server connections are configured in ~/.claude/settings.json under the "mcpServers" key.' },
       { q: 'What are the two MCP server transport types?', opts: ['"local" and "remote"', '"url" and "stdio"', '"http" and "websocket"', '"fast" and "slow"'], correct: 1, exp: '"url" is for remote servers (SSE/HTTP), "stdio" is for local process-based servers.' },
     ]
@@ -1874,29 +1874,29 @@ const MODULES = [
     id: 'agents',
     icon: '🤝',
     name: 'Parallel Sub-Agents',
-    subtitle: 'Orchestration · 15 min',
+    subtitle: 'Orchestration &middot; 15 min',
     xp: 150,
     color: '#7C3AED',
-    eyebrow: 'Module 6 · Multi-Agent',
+    eyebrow: 'Module 6 &middot; Multi-Agent',
     title: 'Orchestrate Multiple Claudes',
-    desc: 'The most powerful Claude setups use multiple agents working in parallel — one orchestrating, others executing specialized tasks simultaneously. This is how you compress hours of work into minutes.',
+    desc: 'The most powerful Claude setups use multiple agents working in parallel &mdash; one orchestrating, others executing specialized tasks simultaneously. This is how you compress hours of work into minutes.',
     tabs: ['Concept', 'Patterns', 'Exercise', 'Quiz', 'Complete'],
     content: {
       concept: `
         <div class="concept-block">
           <h3>Why One Agent Isn't Always Enough</h3>
-          <p>A single Claude agent is powerful, but it's serial — it does one thing, then the next. If you have 10 independent tasks, a single agent takes 10× the time. Parallel sub-agents run those 10 tasks simultaneously.</p>
+          <p>A single Claude agent is powerful, but it's serial &mdash; it does one thing, then the next. If you have 10 independent tasks, a single agent takes 10× the time. Parallel sub-agents run those 10 tasks simultaneously.</p>
           <p>Additionally, specialization helps: an agent focused only on code review gets better results than one juggling code review, file writing, and web search simultaneously.</p>
           <div class="highlight-box"><strong>The orchestrator-worker pattern:</strong> One "boss" Claude manages the workflow. Multiple "worker" Claudes each handle a specific slice of the task in parallel. The boss synthesizes results.</div>
         </div>
         <div class="concept-block">
           <h3>When to Use Multi-Agent</h3>
           <ul>
-            <li><strong>Parallel data processing</strong> — process 100 documents simultaneously across 10 agents</li>
-            <li><strong>Specialized roles</strong> — one agent writes code, another writes tests, another writes docs, all from the same spec</li>
-            <li><strong>Independent verification</strong> — two agents solve the same problem, a third compares and picks the best</li>
-            <li><strong>Long workflows</strong> — break a 2-hour task into parallel 15-minute sub-tasks</li>
-            <li><strong>A/B testing prompts</strong> — run multiple prompt variants simultaneously and compare outputs</li>
+            <li><strong>Parallel data processing</strong> &mdash; process 100 documents simultaneously across 10 agents</li>
+            <li><strong>Specialized roles</strong> &mdash; one agent writes code, another writes tests, another writes docs, all from the same spec</li>
+            <li><strong>Independent verification</strong> &mdash; two agents solve the same problem, a third compares and picks the best</li>
+            <li><strong>Long workflows</strong> &mdash; break a 2-hour task into parallel 15-minute sub-tasks</li>
+            <li><strong>A/B testing prompts</strong> &mdash; run multiple prompt variants simultaneously and compare outputs</li>
           </ul>
         </div>`,
       Patterns: `
@@ -1914,7 +1914,7 @@ const MODULES = [
   <span class="t-type">const</span> plan = <span class="t-type">await</span> client.messages.create({
     model: <span class="t-string">'claude-sonnet-4-6'</span>,
     messages: [{ role: <span class="t-string">'user'</span>, content: 
-      <span class="t-string">`Break this task into 5 parallel sub-tasks: ${bigTask}`</span>
+      <span class="t-string">\`Break this task into 5 parallel sub-tasks: \${bigTask}\`</span>
     }]
   });
 
@@ -2015,43 +2015,43 @@ const MODULES = [
           <div class="key-learnings">
             <h4>Key Learnings</h4>
             <div class="key-item">Orchestrator-worker pattern: one boss Claude manages N worker Claudes running in parallel</div>
-            <div class="key-item">Parallel agents compress time — 10 serial tasks become 1 parallel batch</div>
-            <div class="key-item">Specialization improves quality — focused agents outperform generalist ones</div>
+            <div class="key-item">Parallel agents compress time &mdash; 10 serial tasks become 1 parallel batch</div>
+            <div class="key-item">Specialization improves quality &mdash; focused agents outperform generalist ones</div>
             <div class="key-item">Cost optimization: Sonnet/Opus for orchestration, Haiku for repetitive worker tasks</div>
-            <div class="key-item">Promise.all() is your friend — native JavaScript parallel execution pattern</div>
+            <div class="key-item">Promise.all() is your friend &mdash; native JavaScript parallel execution pattern</div>
           </div>
           <button class="next-btn" onclick="goToModule('git')">Next: Git Integration →</button>
         </div>`
     },
     quiz: [
-      { q: 'What is the main benefit of parallel sub-agents over a single agent?', opts: ['Better code quality', 'Lower cost per token', 'Tasks run simultaneously, reducing total time', 'Access to more MCP servers'], correct: 2, exp: 'Parallel agents run tasks simultaneously — what would take 10× the time serially completes in 1× the time.' },
-      { q: 'Which model tier is best for orchestrator agents that need complex reasoning?', opts: ['Haiku — fastest', 'Sonnet or Opus — most capable', 'It doesn\'t matter — use the same model', 'Always use the cheapest'], correct: 1, exp: 'The orchestrator needs to plan, reason, and synthesize — use Sonnet or Opus. Workers doing repetitive tasks can use cheaper Haiku.' },
+      { q: 'What is the main benefit of parallel sub-agents over a single agent?', opts: ['Better code quality', 'Lower cost per token', 'Tasks run simultaneously, reducing total time', 'Access to more MCP servers'], correct: 2, exp: 'Parallel agents run tasks simultaneously &mdash; what would take 10× the time serially completes in 1× the time.' },
+      { q: 'Which model tier is best for orchestrator agents that need complex reasoning?', opts: ['Haiku &mdash; fastest', 'Sonnet or Opus &mdash; most capable', 'It doesn\'t matter &mdash; use the same model', 'Always use the cheapest'], correct: 1, exp: 'The orchestrator needs to plan, reason, and synthesize &mdash; use Sonnet or Opus. Workers doing repetitive tasks can use cheaper Haiku.' },
     ]
   },
   {
     id: 'git',
     icon: '🌿',
     name: 'Git Integration',
-    subtitle: 'Automation · 12 min',
+    subtitle: 'Automation &middot; 12 min',
     xp: 150,
     color: '#22D3A5',
-    eyebrow: 'Module 7 · Git',
+    eyebrow: 'Module 7 &middot; Git',
     title: 'Claude in Your Git Workflow',
-    desc: 'Claude integrates deeply with Git — reviewing PRs, writing commit messages, creating branches for new features, and even running autonomously on CI/CD pipelines. This is where Claude becomes a permanent member of your dev team.',
+    desc: 'Claude integrates deeply with Git &mdash; reviewing PRs, writing commit messages, creating branches for new features, and even running autonomously on CI/CD pipelines. This is where Claude becomes a permanent member of your dev team.',
     tabs: ['Concept', 'Workflows', 'Exercise', 'Quiz', 'Complete'],
     content: {
       concept: `
         <div class="concept-block">
           <h3>Claude as a Git Team Member</h3>
-          <p>The Claude CLI has native Git awareness — it can read diffs, create commits, manage branches, and reason about your entire commit history. Combined with MCP (GitHub/GitLab servers), it becomes a full autonomous code reviewer and contributor.</p>
+          <p>The Claude CLI has native Git awareness &mdash; it can read diffs, create commits, manage branches, and reason about your entire commit history. Combined with MCP (GitHub/GitLab servers), it becomes a full autonomous code reviewer and contributor.</p>
           <ul>
-            <li><strong>PR reviews</strong> — Claude reads the diff and gives structured feedback on bugs, style, performance</li>
-            <li><strong>Commit messages</strong> — Claude generates conventional commit messages from your staged changes</li>
-            <li><strong>Branch creation</strong> — Claude creates feature branches, makes changes, and opens PRs</li>
-            <li><strong>Merge conflict resolution</strong> — Claude reads both sides and resolves conflicts intelligently</li>
-            <li><strong>CI/CD automation</strong> — Claude runs in GitHub Actions on every PR for automated review</li>
+            <li><strong>PR reviews</strong> &mdash; Claude reads the diff and gives structured feedback on bugs, style, performance</li>
+            <li><strong>Commit messages</strong> &mdash; Claude generates conventional commit messages from your staged changes</li>
+            <li><strong>Branch creation</strong> &mdash; Claude creates feature branches, makes changes, and opens PRs</li>
+            <li><strong>Merge conflict resolution</strong> &mdash; Claude reads both sides and resolves conflicts intelligently</li>
+            <li><strong>CI/CD automation</strong> &mdash; Claude runs in GitHub Actions on every PR for automated review</li>
           </ul>
-          <div class="highlight-box"><strong>This is where it gets powerful:</strong> Imagine a GitHub Action that automatically reviews every PR, comments with bugs found, suggests improvements, and even pushes fixes — without you lifting a finger.</div>
+          <div class="highlight-box"><strong>This is where it gets powerful:</strong> Imagine a GitHub Action that automatically reviews every PR, comments with bugs found, suggests improvements, and even pushes fixes &mdash; without you lifting a finger.</div>
         </div>`,
       Workflows: `
         <div class="concept-block">
@@ -2084,7 +2084,7 @@ const MODULES = [
           </div>
         </div>
         <div class="concept-block">
-          <h3>Automated PR Review — GitHub Actions</h3>
+          <h3>Automated PR Review &mdash; GitHub Actions</h3>
           <p>This GitHub Action automatically runs Claude Code to review every PR:</p>
         </div>
         <div class="code-block">
@@ -2107,8 +2107,8 @@ const MODULES = [
       
       - name: Run Claude Review
         env:
-          ANTHROPIC_API_KEY: <span class="t-string">${{ secrets.ANTHROPIC_API_KEY }}</span>
-          GH_TOKEN: <span class="t-string">${{ secrets.GITHUB_TOKEN }}</span>
+          ANTHROPIC_API_KEY: <span class="t-string">&#36;{{ secrets.ANTHROPIC_API_KEY }}</span>
+          GH_TOKEN: <span class="t-string">&#36;{{ secrets.GITHUB_TOKEN }}</span>
         run: |
           git diff origin/main..HEAD | claude <span class="t-string">"
             Review this PR. Output in this format:
@@ -2117,7 +2117,7 @@ const MODULES = [
             SUGGESTIONS: [improvements]
             VERDICT: APPROVE or REQUEST_CHANGES
           "</span> > review.txt
-          gh pr comment <span class="t-string">${{ github.event.number }}</span> --body "$(cat review.txt)"
+          gh pr comment <span class="t-string">&#36;{{ github.event.number }}</span> --body "$(cat review.txt)"
         </div>`,
       exercise: `
         <div class="exercise-area">
@@ -2151,11 +2151,11 @@ const MODULES = [
           <div class="completion-xp">⚡ +150 XP Earned</div>
           <div class="key-learnings">
             <h4>Key Learnings</h4>
-            <div class="key-item">git diff | claude is the core pattern — pipe any diff for review or analysis</div>
+            <div class="key-item">git diff | claude is the core pattern &mdash; pipe any diff for review or analysis</div>
             <div class="key-item">Claude can create branches, make commits, and manage PRs autonomously</div>
             <div class="key-item">GitHub Actions + Claude Code = automated PR reviewer on every push</div>
             <div class="key-item">Use GH_TOKEN in CI to let Claude post review comments directly to PRs</div>
-            <div class="key-item">Claude knows conventional commits — let it write your commit messages</div>
+            <div class="key-item">Claude knows conventional commits &mdash; let it write your commit messages</div>
           </div>
           <button class="next-btn" onclick="showCertificate()">🎓 Claim Your Certificate!</button>
         </div>`
@@ -2337,7 +2337,7 @@ function markTabDone(tabIndex) {
 // ══════════════════════════════════════════════
 const EXERCISE_DATA = {
   intro: {
-    1: { correct: ['haiku', 'sonnet', 'opus'], hint: 'Think: speed order — what goes fastest to most capable?' },
+    1: { correct: ['haiku', 'sonnet', 'opus'], hint: 'Think: speed order &mdash; what goes fastest to most capable?' },
     2: { isOpen: true }
   },
   cli: {
@@ -2347,7 +2347,7 @@ const EXERCISE_DATA = {
   },
   claudemd: {
     1: { isOpen: true, feedback: '✓ Well done! Great CLAUDE.md rules use directive language (ALWAYS/NEVER), are specific, and cover error handling, naming, async patterns, and security.' },
-    2: { correct: ['false'], hint: 'CLAUDE.md is loaded fresh every session — it\'s read from disk each time Claude Code starts.' }
+    2: { correct: ['false'], hint: 'CLAUDE.md is loaded fresh every session &mdash; it\'s read from disk each time Claude Code starts.' }
   },
   modes: {
     1: { correct: ['plan'], hint: 'Which mode shows you what will happen BEFORE it happens, letting you approve or reject?' },
@@ -2378,7 +2378,7 @@ function checkExercise(moduleId, num) {
 
   if (data.isOpen) {
     result.className = 'exercise-result success';
-    result.textContent = data.feedback || '✓ Answer submitted! Open-ended exercises help you think — compare your answer to the lesson content.';
+    result.textContent = data.feedback || '✓ Answer submitted! Open-ended exercises help you think &mdash; compare your answer to the lesson content.';
     awardExercise();
   } else {
     const correct = data.correct.some(c => val.includes(c.toLowerCase()));
@@ -2405,7 +2405,7 @@ function awardExercise() {
   DB.addExercise(currentUser);
   DB.addXP(currentUser, 10);
   updateTopStats();
-  showToast('💪', '+10 XP — Exercise complete!');
+  showToast('💪', '+10 XP &mdash; Exercise complete!');
 }
 
 // ══════════════════════════════════════════════
@@ -2429,7 +2429,7 @@ function renderQuiz(m) {
           ${pct >= 67 ? `<div style="margin-top:16px;color:var(--success);font-weight:600">✓ Quiz passed! Head to Complete to claim your XP.</div>` : `<div style="margin-top:16px;color:var(--warning)">Review the lesson and try the quiz again.</div>`}
           <button class="btn-secondary" style="margin-top:20px" onclick="retryQuiz('${m.id}')">Retry Quiz</button>
         </div>`;
-      if (pct >= 67) { DB.addXP(currentUser, 25); updateTopStats(); showToast('🎯', '+25 XP — Quiz passed!'); }
+      if (pct >= 67) { DB.addXP(currentUser, 25); updateTopStats(); showToast('🎯', '+25 XP &mdash; Quiz passed!'); }
       return;
     }
     
@@ -2485,7 +2485,7 @@ window.completeModule = function(id) {
     DB.addXP(currentUser, m.xp);
     updateTopStats();
     buildSidebar();
-    showToast('🏆', `+${m.xp} XP — ${m.name} complete!`);
+    showToast('🏆', `+${m.xp} XP &mdash; ${m.name} complete!`);
   }
 };
 
@@ -2519,12 +2519,12 @@ window.showCertificate = function() {
         <div class="completion-xp" style="margin:24px 0">⚡ ${stats.xp} Total XP Earned</div>
         <div class="key-learnings">
           <h4>Competencies Certified</h4>
-          <div class="key-item">Claude CLI (Claude Code) — Installation, commands, workflows</div>
-          <div class="key-item">CLAUDE.md — Persistent project context and team conventions</div>
-          <div class="key-item">Plan & Loop Modes — Controlling AI autonomy</div>
-          <div class="key-item">MCP Servers — Connecting Claude to external tools and APIs</div>
-          <div class="key-item">Parallel Sub-Agents — Multi-agent orchestration patterns</div>
-          <div class="key-item">Git Integration — Automated PR review and CI/CD workflows</div>
+          <div class="key-item">Claude CLI (Claude Code) &mdash; Installation, commands, workflows</div>
+          <div class="key-item">CLAUDE.md &mdash; Persistent project context and team conventions</div>
+          <div class="key-item">Plan & Loop Modes &mdash; Controlling AI autonomy</div>
+          <div class="key-item">MCP Servers &mdash; Connecting Claude to external tools and APIs</div>
+          <div class="key-item">Parallel Sub-Agents &mdash; Multi-agent orchestration patterns</div>
+          <div class="key-item">Git Integration &mdash; Automated PR review and CI/CD workflows</div>
         </div>
         <div style="margin-top:24px;color:var(--text-muted);font-size:13px">Share your achievement:</div>
         <button class="btn-primary" style="margin-top:10px" onclick="navigator.clipboard.writeText('I just completed Claude Mastery certification! Learned Claude CLI, MCP servers, multi-agent orchestration, and Git automation. #ClaudeMastery').then(()=>showToast('📋','Copied to clipboard!'))">Copy Achievement Text</button>
