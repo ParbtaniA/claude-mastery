@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verify a certificate — JKLM Adult AI Curriculum</title>
+<style>
+:root{--white:#fff;--bg:#F7F8FA;--text:#1A1D23;--muted:#4B5563;--dim:#9CA3AF;
+--blue:#2563EB;--blue-light:#EFF6FF;--blue-mid:#BFDBFE;--blue-dark:#1D4ED8;
+--green:#16A34A;--green-light:#F0FDF4;--green-mid:#BBF7D0;
+--red:#DC2626;--red-light:#FEF2F2;--border:#E5E7EB;--border-strong:#D1D5DB;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.top{background:var(--white);border-bottom:1.5px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:10px}
+.mark{width:32px;height:32px;border-radius:6px;background:var(--blue-light);border:1.5px solid var(--blue-mid);display:flex;align-items:center;justify-content:center;color:var(--blue);font-weight:800;font-size:13px}
+.top-t{font-size:15px;font-weight:800;line-height:1.2}
+.top-t small{display:block;font-size:11px;font-weight:600;color:var(--muted)}
+.wrap{max-width:620px;margin:0 auto;padding:48px 24px 80px}
+h1{font-size:28px;font-weight:800;margin-bottom:10px}
+.lead{color:var(--muted);font-size:15px;line-height:1.8;margin-bottom:28px}
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:26px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:7px}
+input{width:100%;border:1.5px solid var(--border-strong);border-radius:6px;padding:12px 14px;font-size:16px;font-family:'SF Mono',Monaco,monospace;outline:none;text-transform:uppercase}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+button{width:100%;margin-top:12px;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+button:hover{background:var(--blue-dark)}
+.res{margin-top:20px;display:none}
+.res.show{display:block}
+.ok{background:var(--green-light);border:2px solid var(--green-mid);border-radius:14px;padding:26px}
+.bad{background:var(--red-light);border:2px solid #FECACA;border-radius:14px;padding:26px;text-align:center}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:700;margin-bottom:18px}
+.row{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.07);font-size:14px}
+.row:last-child{border-bottom:none}
+.row .k{color:var(--muted);font-weight:500;flex-shrink:0}
+.row .v{font-weight:600;text-align:right}
+.note{font-size:13px;color:var(--muted);margin-top:18px;line-height:1.7}
+.foot{margin-top:32px;font-size:13px;color:var(--dim);line-height:1.8;text-align:center}
+.foot a{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="top"><div class="mark">JK</div><div class="top-t">JKLM Adult AI Curriculum<small>Certificate verification</small></div></div>
+<div class="wrap">
+  <h1>Verify a certificate</h1>
+  <p class="lead">Enter the reference number printed on a JKLM certificate to confirm it was genuinely issued, who it belongs to, and when it was awarded. Certificates are issued only when all twenty-five assessment criteria have been recorded as complete.</p>
+  <div class="card">
+    <label for="ref">Certificate reference</label>
+    <input id="ref" placeholder="JKLM-2026-A1B2-C3D4" autocomplete="off" spellcheck="false">
+    <button onclick="check()">Verify certificate</button>
+  </div>
+  <div class="res" id="res"></div>
+  <div class="foot">Issued by JKLM Adult AI Curriculum<br><a href="/">Return to the course</a></div>
+</div>
+<script>
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function check(){
+  const ref=document.getElementById('ref').value.trim().toUpperCase();
+  const box=document.getElementById('res');
+  if(!ref){box.className='res show';box.innerHTML='<div class="bad"><strong>Enter a reference number first.</strong></div>';return;}
+  box.className='res show';box.innerHTML='<div class="card">Checking…</div>';
+  try{
+    const r=await fetch('/api/verify?ref='+encodeURIComponent(ref));
+    const d=await r.json();
+    if(!d.valid){
+      box.innerHTML='<div class="bad"><div style="font-size:38px;margin-bottom:10px">&#10007;</div>'+
+        '<div style="font-size:18px;font-weight:700;color:var(--red);margin-bottom:8px">Not verified</div>'+
+        '<div style="font-size:14px;color:var(--muted)">'+esc(d.reason||'This reference does not match any certificate on record.')+'</div></div>';
+      return;
+    }
+    const dt=new Date(d.issued).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    box.innerHTML='<div class="ok"><div class="badge">&#10003; Verified genuine</div>'+
+      '<div class="row"><span class="k">Certificate holder</span><span class="v">'+esc(d.holder)+'</span></div>'+
+      '<div class="row"><span class="k">Programme</span><span class="v">'+esc(d.course)+'</span></div>'+
+      '<div class="row"><span class="k">Issued by</span><span class="v">'+esc(d.issuer)+'</span></div>'+
+      '<div class="row"><span class="k">Date issued</span><span class="v">'+esc(dt)+'</span></div>'+
+      '<div class="row"><span class="k">Assessment criteria</span><span class="v">'+esc(d.criteriaMet)+' met</span></div>'+
+      '<div class="row"><span class="k">Reference</span><span class="v" style="font-family:monospace">'+esc(d.reference)+'</span></div>'+
+      '<div class="note">This certificate was issued against a server-side record confirming all assessment criteria were completed. Course duration was five weeks of structured study with five practical projects built using the holder&rsquo;s own real work.</div></div>';
+  }catch(e){
+    box.innerHTML='<div class="bad"><strong>Could not reach the verification service.</strong><div style="font-size:14px;color:var(--muted);margin-top:8px">Please try again shortly.</div></div>';
+  }
+}
+document.getElementById('ref').addEventListener('keydown',e=>{if(e.key==='Enter')check();});
+const p=new URLSearchParams(location.search).get('ref');
+if(p){document.getElementById('ref').value=p.toUpperCase();check();}
+</script>
+</body>
+</html>

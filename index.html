@@ -252,22 +252,49 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
     </div>
     <div id="view-login">
       <div class="auth-title">Welcome back</div>
-      <div class="auth-subtitle">Sign in to continue your course. Your progress, exercises and project notes are saved automatically.</div>
+      <div class="auth-subtitle">Sign in to pick up where you left off. Your progress is saved to your account, so you can take a break and return on any device.</div>
       <div id="login-err" class="auth-error"></div>
-      <div class="auth-input-group"><label>Email</label><input class="auth-input" type="email" id="li-email" placeholder="you@example.com"></div>
-      <div class="auth-input-group"><label>Password</label><input class="auth-input" type="password" id="li-pass" placeholder="Your password"></div>
-      <button class="auth-btn" onclick="doLogin()">Sign in</button>
-      <div class="auth-switch">New here? <a onclick="showRegister()">Create a free account</a></div>
+      <div class="auth-input-group"><label>Email</label><input class="auth-input" type="email" id="li-email" placeholder="you@example.com" autocomplete="email"></div>
+      <div class="auth-input-group"><label>Password</label><input class="auth-input" type="password" id="li-pass" placeholder="Your password" autocomplete="current-password"></div>
+      <button class="auth-btn" id="li-btn" onclick="doLogin()">Sign in</button>
+      <div class="auth-switch">New here? <a onclick="showRegister()">Create a free account</a> &middot; <a onclick="showRecover()">Lost your password?</a></div>
     </div>
     <div id="view-register" style="display:none">
       <div class="auth-title">Start the course</div>
-      <div class="auth-subtitle">Five weeks. Two hours a week. You will finish with working tools you built yourself and a certificate that reflects real completed work.</div>
+      <div class="auth-subtitle">Five weeks. Two hours a week. You finish with working tools you built yourself and a certificate anyone can verify.</div>
       <div id="reg-err" class="auth-error"></div>
-      <div class="auth-input-group"><label>Full name (as it should appear on your certificate)</label><input class="auth-input" type="text" id="rg-name" placeholder="Jane Smith"></div>
-      <div class="auth-input-group"><label>Email</label><input class="auth-input" type="email" id="rg-email" placeholder="you@example.com"></div>
-      <div class="auth-input-group"><label>Password</label><input class="auth-input" type="password" id="rg-pass" placeholder="At least 6 characters"></div>
-      <button class="auth-btn" onclick="doRegister()">Create account and begin</button>
+      <div class="auth-input-group"><label>Full name (as it should appear on your certificate)</label><input class="auth-input" type="text" id="rg-name" placeholder="Jane Smith" autocomplete="name"></div>
+      <div class="auth-input-group"><label>Email</label><input class="auth-input" type="email" id="rg-email" placeholder="you@example.com" autocomplete="email"></div>
+      <div class="auth-input-group"><label>Password (at least 8 characters)</label><input class="auth-input" type="password" id="rg-pass" placeholder="Choose a password" autocomplete="new-password"></div>
+      <label style="display:flex;align-items:flex-start;gap:10px;margin:14px 0;font-size:13px;color:var(--text-muted);cursor:pointer;line-height:1.6">
+        <input type="checkbox" id="rg-sync" checked style="width:17px;height:17px;margin-top:2px;flex-shrink:0">
+        <span>Save my exercise and project writing to my account so it follows me between devices. You can change this later, and turn it off if your work is commercially sensitive.</span>
+      </label>
+      <button class="auth-btn" id="rg-btn" onclick="doRegister()">Create account and begin</button>
       <div class="auth-switch">Already enrolled? <a onclick="showLogin()">Sign in</a></div>
+    </div>
+    <div id="view-recover" style="display:none">
+      <div class="auth-title">Reset your password</div>
+      <div class="auth-subtitle">Enter your email and the recovery code you were given when you enrolled. There is no email sending on this course, so the recovery code is the only way back in.</div>
+      <div id="rec-err" class="auth-error"></div>
+      <div class="auth-input-group"><label>Email</label><input class="auth-input" type="email" id="rc-email" placeholder="you@example.com"></div>
+      <div class="auth-input-group"><label>Recovery code</label><input class="auth-input" type="text" id="rc-code" placeholder="A1B2-C3D4-E5" style="font-family:monospace;text-transform:uppercase"></div>
+      <div class="auth-input-group"><label>New password</label><input class="auth-input" type="password" id="rc-pass" placeholder="At least 8 characters"></div>
+      <button class="auth-btn" onclick="doRecover()">Reset password</button>
+      <div class="auth-switch"><a onclick="showLogin()">Back to sign in</a></div>
+    </div>
+    <div id="view-recovery-code" style="display:none">
+      <div class="auth-title" id="rec-code-title">Save your recovery code</div>
+      <div class="auth-subtitle">This course does not send emails. If you forget your password, this code is the only way to recover your account and your progress. Write it down or save it somewhere safe now &mdash; it will not be shown again.</div>
+      <div style="background:var(--blue-light);border:2px solid var(--blue-mid);border-radius:10px;padding:22px;text-align:center;margin-bottom:18px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:8px">Your recovery code</div>
+        <div id="rec-code" style="font-family:'SF Mono',Monaco,monospace;font-size:23px;font-weight:700;color:var(--blue-dark);letter-spacing:.06em"></div>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;font-size:14px;cursor:pointer;line-height:1.6">
+        <input type="checkbox" id="rec-ack" style="width:18px;height:18px;margin-top:2px;flex-shrink:0">
+        <span>I have saved this code somewhere I can find it again</span>
+      </label>
+      <button class="auth-btn" onclick="proceedFromRecovery()">Continue to the course</button>
     </div>
   </div>
 </div>
@@ -281,7 +308,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
       <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
       <span class="prog-num" id="prog-num">0 of 25 done</span>
     </div>
-    <div class="user-chip"><div class="user-avatar" id="u-avatar">A</div><span class="user-name" id="u-name">User</span></div>
+    <span id="save-state" style="font-size:12px;color:var(--green);font-weight:600;margin-right:4px">All work saved</span><div class="user-chip" onclick="openAccount()" style="cursor:pointer" title="Your data and privacy"><div class="user-avatar" id="u-avatar">A</div><span class="user-name" id="u-name">User</span></div>
     <button class="logout-btn" onclick="doLogout()">Sign out</button>
   </div>
   <div class="app-body">
@@ -292,6 +319,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
         <div class="cert-link-title" id="cert-link-title">Certificate locked</div>
         <div class="cert-link-sub" id="cert-link-sub">Complete all 25 criteria</div>
       </div>
+      <div style="padding:10px 16px 20px;text-align:center"><a onclick="openAccount()" style="font-size:12px;color:var(--text-muted);cursor:pointer;text-decoration:none">Your data and privacy</a><span style="color:var(--border-strong);margin:0 6px">&middot;</span><a href="/verify" target="_blank" style="font-size:12px;color:var(--text-muted);text-decoration:none">Verify a certificate</a></div>
     </div>
     <div class="main-content" id="main">
       <div class="stats-grid">
@@ -1153,101 +1181,157 @@ Test: does a planted anomaly get flagged?</span>
 }
 ];
 
-const DB = {
-  users: () => JSON.parse(localStorage.getItem('jklm_users') || '{}'),
-  saveUsers: u => localStorage.setItem('jklm_users', JSON.stringify(u)),
-  session: () => JSON.parse(localStorage.getItem('jklm_session') || 'null'),
-  setSession: s => localStorage.setItem('jklm_session', JSON.stringify(s)),
-  clearSession: () => localStorage.removeItem('jklm_session'),
-  get: e => DB.users()[e] || null,
-  set: (e, d) => { const u = DB.users(); u[e] = Object.assign({}, u[e], d); DB.saveUsers(u); },
-  crit: e => { const u = DB.get(e); return (u && u.criteria) || {}; },
-  toggleCrit: (e, key) => {
-    const u = DB.get(e) || {};
-    if (!u.criteria) u.criteria = {};
-    u.criteria[key] = !u.criteria[key];
-    DB.set(e, u);
-    return u.criteria[key];
-  },
-  notes: e => { const u = DB.get(e); return (u && u.notes) || {}; },
-  saveNote: (e, key, val) => {
-    const u = DB.get(e) || {};
-    if (!u.notes) u.notes = {};
-    u.notes[key] = val;
-    DB.set(e, u);
-  },
-  quiz: e => { const u = DB.get(e); return (u && u.quiz) || {}; },
-  setQuiz: (e, wid, score) => {
-    const u = DB.get(e) || {};
-    if (!u.quiz) u.quiz = {};
-    u.quiz[wid] = score;
-    DB.set(e, u);
-  }
+const API = '/api';
+let CU = null, CW = 'w1', CT = 0, SYNCT = null, ONLINE = true;
+
+const LS = {
+  get t(){ return localStorage.getItem('jklm_token'); },
+  set t(v){ v ? localStorage.setItem('jklm_token', v) : localStorage.removeItem('jklm_token'); },
+  cache(){ try { return JSON.parse(localStorage.getItem('jklm_cache') || 'null'); } catch { return null; } },
+  setCache(u){ localStorage.setItem('jklm_cache', JSON.stringify(u)); },
+  clear(){ localStorage.removeItem('jklm_token'); localStorage.removeItem('jklm_cache'); }
 };
 
-let CU = null, CW = 'w1', CT = 0;
+async function api(path, opts = {}) {
+  const h = { 'content-type': 'application/json' };
+  if (LS.t) h.authorization = 'Bearer ' + LS.t;
+  const r = await fetch(API + '/' + path, { ...opts, headers: { ...h, ...(opts.headers || {}) } });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error(d.error || 'Request failed'), { status: r.status, data: d });
+  return d;
+}
 
-function showRegister(){ document.getElementById('view-login').style.display='none'; document.getElementById('view-register').style.display='block'; }
-function showLogin(){ document.getElementById('view-register').style.display='none'; document.getElementById('view-login').style.display='block'; }
+const DB = {
+  crit: () => (CU && CU.criteria) || {},
+  notes: () => (CU && CU.notes) || {},
+  quiz: () => (CU && CU.quiz) || {},
+  toggleCrit(k){ if(!CU.criteria) CU.criteria={}; CU.criteria[k] = !CU.criteria[k]; queueSync(); return CU.criteria[k]; },
+  saveNote(k,v){ if(!CU.notes) CU.notes={}; CU.notes[k]=v; queueSync(); },
+  setQuiz(w,s){ if(!CU.quiz) CU.quiz={}; CU.quiz[w]=s; queueSync(); }
+};
 
-function doRegister(){
-  const n=document.getElementById('rg-name').value.trim();
-  const e=document.getElementById('rg-email').value.trim().toLowerCase();
-  const p=document.getElementById('rg-pass').value;
+function queueSync(){
+  LS.setCache(CU);
+  setSaveState('saving');
+  clearTimeout(SYNCT);
+  SYNCT = setTimeout(doSync, 1200);
+}
+
+async function doSync(){
+  if (!CU || !LS.t) return;
+  try {
+    const r = await api('sync', { method:'POST', body: JSON.stringify({
+      criteria: CU.criteria || {}, quiz: CU.quiz || {},
+      notes: CU.notes || {}, syncNotes: CU.syncNotes !== false }) });
+    ONLINE = true;
+    setSaveState('saved', r.savedAt);
+  } catch(e){
+    if (e.status === 401) { toast('&#9888;','Session expired - please sign in again'); return doLogout(); }
+    ONLINE = false; setSaveState('offline');
+  }
+}
+
+function setSaveState(state, at){
+  const el = document.getElementById('save-state');
+  if (!el) return;
+  if (state === 'saving'){ el.textContent = 'Saving…'; el.style.color = 'var(--text-dim)'; }
+  else if (state === 'saved'){
+    el.textContent = 'All work saved';
+    el.style.color = 'var(--green)';
+  }
+  else { el.textContent = 'Offline — saved on this device only'; el.style.color = 'var(--amber)'; }
+}
+
+function showRegister(){ hideAll(); document.getElementById('view-register').style.display='block'; }
+function showLogin(){ hideAll(); document.getElementById('view-login').style.display='block'; }
+function showRecover(){ hideAll(); document.getElementById('view-recover').style.display='block'; }
+function hideAll(){ ['view-login','view-register','view-recover','view-recovery-code'].forEach(v=>{
+  const el=document.getElementById(v); if(el) el.style.display='none'; }); }
+
+function authErr(id,msg){ const e=document.getElementById(id); e.textContent=msg; e.style.display='block'; }
+
+async function doRegister(){
+  const name=document.getElementById('rg-name').value.trim();
+  const email=document.getElementById('rg-email').value.trim();
+  const password=document.getElementById('rg-pass').value;
+  const syncNotes=document.getElementById('rg-sync').checked;
   const err=document.getElementById('reg-err'); err.style.display='none';
-  if(!n||!e||!p){ err.textContent='Please fill in all three fields.'; err.style.display='block'; return; }
-  if(p.length<6){ err.textContent='Password must be at least 6 characters.'; err.style.display='block'; return; }
-  if(!e.includes('@')){ err.textContent='Please enter a valid email address.'; err.style.display='block'; return; }
-  if(DB.get(e)){ err.textContent='That email is already registered. Please sign in instead.'; err.style.display='block'; return; }
-  DB.set(e,{name:n,email:e,pw:btoa(p),joined:new Date().toISOString(),criteria:{},notes:{},quiz:{}});
-  DB.setSession({email:e,name:n});
-  launch(e,n);
+  const btn=document.getElementById('rg-btn'); btn.disabled=true; btn.textContent='Creating account…';
+  try{
+    const d=await api('register',{method:'POST',body:JSON.stringify({name,email,password,syncNotes})});
+    LS.t=d.token; CU=d.user; LS.setCache(CU);
+    hideAll();
+    document.getElementById('view-recovery-code').style.display='block';
+    document.getElementById('rec-code').textContent=d.recovery;
+  }catch(e){ authErr('reg-err', e.message); }
+  finally{ btn.disabled=false; btn.textContent='Create account and begin'; }
 }
-function doLogin(){
-  const e=document.getElementById('li-email').value.trim().toLowerCase();
-  const p=document.getElementById('li-pass').value;
+
+function proceedFromRecovery(){
+  if(!document.getElementById('rec-ack').checked){
+    alert('Please confirm you have saved your recovery code before continuing.'); return;
+  }
+  launch();
+}
+
+async function doLogin(){
+  const email=document.getElementById('li-email').value.trim();
+  const password=document.getElementById('li-pass').value;
   const err=document.getElementById('login-err'); err.style.display='none';
-  const u=DB.get(e);
-  if(!u||u.pw!==btoa(p)){ err.textContent='Email or password is incorrect.'; err.style.display='block'; return; }
-  DB.setSession({email:e,name:u.name});
-  launch(e,u.name);
+  const btn=document.getElementById('li-btn'); btn.disabled=true; btn.textContent='Signing in…';
+  try{
+    const d=await api('login',{method:'POST',body:JSON.stringify({email,password})});
+    LS.t=d.token; CU=d.user; LS.setCache(CU); launch();
+  }catch(e){ authErr('login-err', e.message); }
+  finally{ btn.disabled=false; btn.textContent='Sign in'; }
 }
-function doLogout(){
-  DB.clearSession(); CU=null;
+
+async function doRecover(){
+  const email=document.getElementById('rc-email').value.trim();
+  const recovery=document.getElementById('rc-code').value.trim();
+  const password=document.getElementById('rc-pass').value;
+  const err=document.getElementById('rec-err'); err.style.display='none';
+  try{
+    const d=await api('recover',{method:'POST',body:JSON.stringify({email,recovery,password})});
+    hideAll();
+    document.getElementById('view-recovery-code').style.display='block';
+    document.getElementById('rec-code').textContent=d.recovery;
+    document.getElementById('rec-code-title').textContent='Password reset. Here is your new recovery code';
+    const d2=await api('login',{method:'POST',body:JSON.stringify({email,password})});
+    LS.t=d2.token; CU=d2.user; LS.setCache(CU);
+  }catch(e){ authErr('rec-err', e.message); }
+}
+
+async function doLogout(){
+  try{ await api('logout',{method:'POST'}); }catch{}
+  LS.clear(); CU=null;
   document.getElementById('app').classList.remove('visible');
   document.getElementById('auth-screen').style.display='flex';
   showLogin();
 }
-function launch(e,n){
-  CU=e;
+
+function launch(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').classList.add('visible');
-  document.getElementById('u-name').textContent=n;
-  document.getElementById('u-avatar').textContent=n.charAt(0).toUpperCase();
+  document.getElementById('u-name').textContent=CU.name;
+  document.getElementById('u-avatar').textContent=CU.name.charAt(0).toUpperCase();
+  setSaveState('saved');
   updateStats(); buildSidebar(); loadWeek('w1');
 }
 
 function totalCriteria(){ return WEEKS.reduce((s,w)=>s+w.criteria.length,0); }
-function metCount(){
-  const c=DB.crit(CU); let n=0;
-  WEEKS.forEach(w=>w.criteria.forEach((_,i)=>{ if(c[w.id+'-'+i]) n++; }));
-  return n;
-}
-function weekMet(wid){
-  const w=WEEKS.find(x=>x.id===wid), c=DB.crit(CU); let n=0;
-  w.criteria.forEach((_,i)=>{ if(c[wid+'-'+i]) n++; });
-  return n;
-}
-function weekDone(wid){ const w=WEEKS.find(x=>x.id===wid); return weekMet(wid)===w.criteria.length; }
+function metCount(){ const c=DB.crit(); let n=0;
+  WEEKS.forEach(w=>w.criteria.forEach((_,i)=>{ if(c[w.id+'-'+i]) n++; })); return n; }
+function weekMet(wid){ const w=WEEKS.find(x=>x.id===wid),c=DB.crit(); let n=0;
+  w.criteria.forEach((_,i)=>{ if(c[wid+'-'+i]) n++; }); return n; }
+function weekDone(wid){ return weekMet(wid)===WEEKS.find(x=>x.id===wid).criteria.length; }
 function allDone(){ return metCount()===totalCriteria(); }
 
 function updateStats(){
-  const met=metCount(), tot=totalCriteria();
+  const met=metCount(),tot=totalCriteria();
   const wd=WEEKS.filter(w=>weekDone(w.id)).length;
-  const pd=WEEKS.filter(w=>{
-    const n=DB.notes(CU); const f=w.project.fields;
-    return f.every(x=>n[x.id]&&n[x.id].trim().length>15);
-  }).length;
+  const n=DB.notes();
+  const pd=WEEKS.filter(w=>w.project.fields.every(x=>n[x.id]&&n[x.id].trim().length>15)).length;
   document.getElementById('s-weeks').textContent=wd+'/5';
   document.getElementById('s-crit').textContent=met+'/'+tot;
   document.getElementById('s-proj').textContent=pd+'/5';
@@ -1255,22 +1339,21 @@ function updateStats(){
   document.getElementById('prog-fill').style.width=(met/tot*100)+'%';
   document.getElementById('prog-num').textContent=met+' of '+tot+' done';
   const cl=document.getElementById('cert-link');
-  if(allDone()){
-    cl.classList.add('ready');
-    document.getElementById('cert-link-title').textContent='Certificate ready';
-    document.getElementById('cert-link-sub').textContent='All criteria met - click to view';
-  } else {
-    cl.classList.remove('ready');
+  if(CU.certificate){ cl.classList.add('ready');
+    document.getElementById('cert-link-title').textContent='Certificate issued';
+    document.getElementById('cert-link-sub').textContent=CU.certificate.ref;
+  } else if(allDone()){ cl.classList.add('ready');
+    document.getElementById('cert-link-title').textContent='Certificate ready to claim';
+    document.getElementById('cert-link-sub').textContent='All criteria met - click to issue';
+  } else { cl.classList.remove('ready');
     document.getElementById('cert-link-title').textContent='Certificate locked';
-    document.getElementById('cert-link-sub').textContent=(tot-met)+' criteria remaining';
-  }
+    document.getElementById('cert-link-sub').textContent=(tot-met)+' criteria remaining'; }
 }
 
 function buildSidebar(){
   document.getElementById('week-list').innerHTML=WEEKS.map(w=>{
-    const met=weekMet(w.id), tot=w.criteria.length, done=met===tot;
-    const pct=Math.round(met/tot*100), circ=2*Math.PI*15;
-    const off=circ-(pct/100)*circ;
+    const met=weekMet(w.id),tot=w.criteria.length,done=met===tot;
+    const circ=2*Math.PI*15, off=circ-(met/tot)*circ;
     return '<div class="week-item '+(w.id===CW?'active':'')+'" onclick="loadWeek(\''+w.id+'\')">'+
       '<div class="week-ring"><svg width="38" height="38" viewBox="0 0 38 38">'+
       '<circle class="ring-bg" cx="19" cy="19" r="15"/>'+
@@ -1284,29 +1367,21 @@ function buildSidebar(){
 function loadWeek(id){ CW=id; CT=0; buildSidebar(); render(); document.getElementById('main').scrollTop=0; }
 
 function render(){
-  const w=WEEKS.find(x=>x.id===CW);
-  const n=DB.notes(CU), c=DB.crit(CU);
-  const tabs=w.tabs;
+  const w=WEEKS.find(x=>x.id===CW), n=DB.notes(), c=DB.crit();
   let panes=[];
-
   panes.push('<div class="objectives"><h3>By the end of this week you will be able to</h3><ul>'+
     w.objectives.map(o=>'<li>'+o+'</li>').join('')+'</ul></div>'+
-    '<div class="block"><h3>How this week works</h3><p>Read the <strong>Learn</strong> section first — it takes about 30 minutes and everything after depends on it. Then work through the four <strong>Exercises</strong>, writing real answers rather than reading and moving on. The <strong>Mini-project</strong> is the main deliverable and takes about an hour. Finish with the <strong>Quiz</strong>, then tick off your completion criteria.</p>'+
-    '<p>Your written answers save automatically as you type. Nothing is graded — the criteria are yours to tick honestly, and the certificate at the end is only meaningful if they are true.</p></div>');
-
+    '<div class="block"><h3>How this week works</h3><p>Read the <strong>Learn</strong> section first &mdash; about 30 minutes, and everything after depends on it. Then work through the four <strong>Exercises</strong>, writing real answers rather than reading and moving on. The <strong>Mini-project</strong> is the main deliverable and takes about an hour. Finish with the <strong>Quiz</strong>, then tick off your completion criteria.</p>'+
+    '<p>Your work saves to your account automatically as you type, so you can stop at any point and pick up on any device.</p></div>');
   panes.push(w.learn);
-
-  panes.push('<div class="block"><h3>Exercises</h3><p>Four exercises, roughly 45 minutes in total. Write proper answers — the act of putting it in your own words is what makes it stick. Your work saves as you type.</p></div>'+
-    w.exercises.map(e=>{
-      const key=w.id+'-ex'+e.n;
+  panes.push('<div class="block"><h3>Exercises</h3><p>Four exercises, roughly 45 minutes total. Write proper answers &mdash; putting it in your own words is what makes it stick.</p></div>'+
+    w.exercises.map(e=>{ const key=w.id+'-ex'+e.n;
       return '<div class="ex"><div class="ex-head"><div class="ex-num">'+e.n+'</div><div class="ex-title">'+e.title+'</div><div class="ex-time">'+e.time+'</div></div>'+
         '<div class="ex-body"><div class="ex-prompt">'+e.prompt+'</div>'+
         '<textarea class="ex-input" id="'+key+'" placeholder="'+e.ph.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')+'" oninput="saveNote(\''+key+'\')">'+(n[key]||'')+'</textarea>'+
         '<div class="ex-actions"><button class="btn btn-primary" onclick="submitEx(\''+key+'\')">Save answer</button>'+
         '<button class="btn btn-secondary" onclick="showFb(\''+key+'\')">Show model answer</button></div>'+
-        '<div class="ex-result" id="'+key+'-r"></div></div></div>';
-    }).join(''));
-
+        '<div class="ex-result" id="'+key+'-r"></div></div></div>'; }).join(''));
   const p=w.project;
   panes.push('<div class="proj"><div class="proj-head"><div class="proj-tag">Mini-project</div><div class="proj-title">'+p.title+'</div><div class="proj-time">Estimated time: '+p.time+'</div></div>'+
     '<div class="proj-body"><p style="font-size:15px;line-height:1.8;color:var(--text-muted);margin-bottom:6px">'+p.intro+'</p>'+
@@ -1314,24 +1389,17 @@ function render(){
     '<div class="hl"><strong>Guidance:</strong> '+p.guide+'</div>'+
     p.fields.map(f=>'<div style="margin-top:16px"><label style="display:block;font-size:14px;font-weight:600;margin-bottom:7px">'+f.label+'</label>'+
       '<textarea class="ex-input" style="min-height:'+f.h+'px" id="'+f.id+'" placeholder="'+f.ph.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')+'" oninput="saveNote(\''+f.id+'\')">'+(n[f.id]||'')+'</textarea></div>').join('')+
-    '<div style="margin-top:16px"><button class="btn btn-primary" onclick="saveProject()">Save project work</button></div></div></div>');
-
+    '</div></div>');
   panes.push('<div id="quizbox"></div>');
-
-  const qs=DB.quiz(CU)[w.id];
-  panes.push('<div class="block"><h3>Completion criteria</h3><p>Tick each item you have genuinely completed. These gate your certificate. Nobody checks them but you — which is exactly why honesty here is the whole point.</p></div>'+
-    '<div class="crit">'+w.criteria.map((ct,i)=>{
-      const k=w.id+'-'+i;
+  panes.push('<div class="block"><h3>Completion criteria</h3><p>Tick each item you have genuinely completed. These are recorded against your account and are what your certificate is issued on. Nobody else checks them &mdash; which is precisely why honesty here is the whole point.</p></div>'+
+    '<div class="crit">'+w.criteria.map((ct,i)=>{ const k=w.id+'-'+i;
       return '<div class="crit-item '+(c[k]?'checked':'')+'" onclick="toggleCrit(\''+k+'\')" id="ci-'+k+'">'+
-        '<div class="crit-box">&#10003;</div><div class="crit-text">'+ct+'</div></div>';
-    }).join('')+'</div>'+
+        '<div class="crit-box">&#10003;</div><div class="crit-text">'+ct+'</div></div>'; }).join('')+'</div>'+
     '<div id="week-done-box" style="margin-top:16px">'+(weekDone(w.id)?doneCard(w):'')+'</div>');
-
   document.getElementById('lesson').innerHTML=
     '<div class="lesson-header"><div class="lesson-eyebrow">'+w.eyebrow+'</div><div class="lesson-title">'+w.title+'</div><div class="lesson-desc">'+w.desc+'</div></div>'+
-    '<div class="lesson-tabs">'+tabs.map((t,i)=>'<div class="lesson-tab '+(i===0?'active':'')+'" onclick="switchTab('+i+')">'+t+'</div>').join('')+'</div>'+
-    '<div class="lesson-body">'+panes.map((p,i)=>'<div class="tab-content '+(i===0?'active':'')+'" id="pane-'+i+'">'+p+'</div>').join('')+'</div>';
-
+    '<div class="lesson-tabs">'+w.tabs.map((t,i)=>'<div class="lesson-tab '+(i===0?'active':'')+'" onclick="switchTab('+i+')">'+t+'</div>').join('')+'</div>'+
+    '<div class="lesson-body">'+panes.map((pn,i)=>'<div class="tab-content '+(i===0?'active':'')+'" id="pane-'+i+'">'+pn+'</div>').join('')+'</div>';
   renderQuiz(w);
 }
 
@@ -1341,7 +1409,7 @@ function doneCard(w){
     '<div class="learn-list"><h4>What you now know</h4>'+w.learned.map(l=>'<div class="learn-item">'+l+'</div>').join('')+'</div>'+
     '<p style="color:var(--text-muted);font-size:15px;line-height:1.8;margin:16px 0 22px">'+w.next+'</p>'+
     (w.num<5?'<button class="btn btn-primary" style="padding:14px 30px;font-size:16px" onclick="loadWeek(\'w'+(w.num+1)+'\')">Start week '+(w.num+1)+'</button>':
-     '<button class="btn btn-primary" style="padding:14px 30px;font-size:16px" onclick="openCertificate()">View your certificate</button>')+'</div>';
+     '<button class="btn btn-primary" style="padding:14px 30px;font-size:16px" onclick="openCertificate()">Claim your certificate</button>')+'</div>';
 }
 
 function switchTab(i){
@@ -1349,52 +1417,35 @@ function switchTab(i){
   document.querySelectorAll('.tab-content').forEach((t,x)=>t.classList.toggle('active',x===i));
   CT=i;
 }
-
-function saveNote(key){
-  const el=document.getElementById(key);
-  if(el) DB.saveNote(CU,key,el.value);
+function saveNote(k){ const el=document.getElementById(k); if(el) DB.saveNote(k,el.value); }
+function submitEx(k){
+  saveNote(k);
+  const el=document.getElementById(k), r=document.getElementById(k+'-r');
+  if(!el.value.trim()){ r.className='ex-result hint'; r.textContent='Write an answer first &mdash; even a rough one. The writing is what does the work.'; return; }
+  if(el.value.trim().length<40){ r.className='ex-result hint'; r.textContent='That is quite short. Try expanding it &mdash; the exercise works by making you articulate the reasoning.'; return; }
+  r.className='ex-result ok'; r.textContent='Answer saved to your account. Compare against the model answer to see if you missed anything.';
 }
-function submitEx(key){
-  saveNote(key);
-  const el=document.getElementById(key), r=document.getElementById(key+'-r');
-  if(!el.value.trim()){ r.className='ex-result hint'; r.textContent='Write an answer first — even a rough one. The writing is what does the work.'; return; }
-  if(el.value.trim().length<40){ r.className='ex-result hint'; r.textContent='That is quite short. Try expanding it — the exercise works by making you articulate the reasoning, not just name the answer.'; return; }
-  r.className='ex-result ok'; r.textContent='Answer saved. Compare yours against the model answer to see if you missed anything.';
-  toast('&#10003;','Answer saved');
-}
-function showFb(key){
-  const w=WEEKS.find(x=>x.id===CW);
-  const n=parseInt(key.split('-ex')[1]);
-  const ex=w.exercises.find(e=>e.n===n);
-  const r=document.getElementById(key+'-r');
+function showFb(k){
+  const w=WEEKS.find(x=>x.id===CW), n=parseInt(k.split('-ex')[1]);
+  const ex=w.exercises.find(e=>e.n===n), r=document.getElementById(k+'-r');
   r.className='ex-result ok'; r.innerHTML='<strong>Model answer:</strong> '+ex.fb;
 }
-function saveProject(){
-  const w=WEEKS.find(x=>x.id===CW);
-  w.project.fields.forEach(f=>saveNote(f.id));
-  updateStats();
-  toast('&#128190;','Project work saved');
-}
 function toggleCrit(k){
-  DB.toggleCrit(CU,k);
-  const el=document.getElementById('ci-'+k);
-  el.classList.toggle('checked');
+  DB.toggleCrit(k);
+  document.getElementById('ci-'+k).classList.toggle('checked');
   updateStats(); buildSidebar();
-  const w=WEEKS.find(x=>x.id===CW);
-  const box=document.getElementById('week-done-box');
+  const w=WEEKS.find(x=>x.id===CW), box=document.getElementById('week-done-box');
   if(box) box.innerHTML=weekDone(w.id)?doneCard(w):'';
   if(weekDone(w.id)) toast('&#127881;','Week '+w.num+' complete');
-  if(allDone()) toast('&#127891;','All criteria met - certificate unlocked');
+  if(allDone()&&!CU.certificate) toast('&#127891;','All criteria met - certificate ready to claim');
 }
 
 function renderQuiz(w){
-  const box=document.getElementById('quizbox');
-  if(!box) return;
-  let qi=0, score=0, answered=[];
+  const box=document.getElementById('quizbox'); if(!box) return;
+  let qi=0,score=0,answered=[];
   function draw(){
     if(qi>=w.quiz.length){
-      const pct=Math.round(score/w.quiz.length*100);
-      DB.setQuiz(CU,w.id,pct);
+      const pct=Math.round(score/w.quiz.length*100); DB.setQuiz(w.id,pct);
       box.innerHTML='<div class="block"><div class="quiz-score"><div class="quiz-score-num">'+pct+'%</div>'+
         '<div class="quiz-score-label">'+score+' of '+w.quiz.length+' correct</div>'+
         '<div style="margin-top:18px;font-size:15px;color:'+(pct>=80?'var(--green)':'var(--amber)')+';font-weight:600">'+
@@ -1409,8 +1460,7 @@ function renderQuiz(w){
       '<div class="quiz-fb" id="qfb"></div></div>';
   }
   window._qa=function(ch){
-    if(answered.includes(qi)) return;
-    answered.push(qi);
+    if(answered.includes(qi)) return; answered.push(qi);
     const q=w.quiz[qi], fb=document.getElementById('qfb');
     document.getElementById('qo'+ch).classList.add(ch===q.a?'correct':'wrong');
     if(ch===q.a) score++; else document.getElementById('qo'+q.a).classList.add('correct');
@@ -1424,16 +1474,15 @@ function renderQuiz(w){
   draw();
 }
 
-function openCertificate(){
-  const u=DB.get(CU);
+async function openCertificate(){
   const main=document.getElementById('lesson');
   document.getElementById('main').scrollTop=0;
-  if(!allDone()){
+  if(!allDone()&&!CU.certificate){
     const rem=totalCriteria()-metCount();
     main.innerHTML='<div class="lesson-body"><div class="cert-page"><div class="cert-locked">'+
       '<div style="font-size:52px;margin-bottom:16px">&#128274;</div>'+
       '<div style="font-size:24px;font-weight:800;margin-bottom:10px">Certificate not yet available</div>'+
-      '<p style="color:var(--text-muted);font-size:15px;line-height:1.8;max-width:520px;margin:0 auto 22px">You have '+rem+' completion criteria still to meet. This certificate is issued on the basis of completed work, not attendance — which is what makes it worth having.</p>'+
+      '<p style="color:var(--text-muted);font-size:15px;line-height:1.8;max-width:520px;margin:0 auto 22px">You have '+rem+' completion criteria still to meet. Certificates are issued against a server-side record of completed work, not attendance &mdash; which is what makes them verifiable by anyone.</p>'+
       '<div style="max-width:460px;margin:0 auto;text-align:left">'+WEEKS.map(w=>{
         const m=weekMet(w.id),t=w.criteria.length;
         return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px">'+
@@ -1441,12 +1490,23 @@ function openCertificate(){
       }).join('')+'</div></div></div></div>';
     return;
   }
-  const d=new Date();
-  const dateStr=d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-  const ref='JKLM-'+d.getFullYear()+'-'+String(Math.abs(hashCode(CU))).slice(0,6);
+  if(!CU.certificate){
+    main.innerHTML='<div class="lesson-body"><div class="cert-page"><div class="cert-locked"><div style="font-size:18px">Issuing your certificate…</div></div></div></div>';
+    try{ await doSync(); const d=await api('certificate',{method:'POST'}); CU.certificate=d.certificate; LS.setCache(CU); updateStats(); }
+    catch(e){
+      main.innerHTML='<div class="lesson-body"><div class="cert-page"><div class="cert-locked">'+
+        '<div style="font-size:20px;font-weight:700;color:var(--red);margin-bottom:10px">Could not issue certificate</div>'+
+        '<p style="color:var(--text-muted)">'+e.message+(e.data&&e.data.met!=null?' ('+e.data.met+' of '+e.data.required+' criteria recorded on the server)':'')+'</p></div></div></div>';
+      return;
+    }
+  }
+  const c=CU.certificate;
+  const dt=new Date(c.issuedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const vurl=location.origin+'/verify?ref='+encodeURIComponent(c.ref);
   main.innerHTML='<div class="lesson-body"><div class="cert-page">'+
     '<div class="no-print" style="text-align:center;margin-bottom:20px">'+
     '<button class="btn btn-primary" onclick="window.print()">Print or save as PDF</button> '+
+    '<button class="btn btn-secondary" onclick="navigator.clipboard.writeText(\''+vurl+'\').then(()=>toast(\'&#128203;\',\'Verification link copied\'))">Copy verification link</button> '+
     '<button class="btn btn-secondary" onclick="loadWeek(\'w1\')">Back to course</button></div>'+
     '<div class="cert">'+
     '<div class="cert-seal">&#127891;</div>'+
@@ -1454,7 +1514,7 @@ function openCertificate(){
     '<div class="cert-sub">Practical AI Proficiency Programme</div>'+
     '<div class="cert-h">Certificate of Completion</div>'+
     '<div class="cert-pre">This is to certify that</div>'+
-    '<div class="cert-name">'+u.name+'</div>'+
+    '<div class="cert-name">'+c.name+'</div>'+
     '<div class="cert-body">has successfully completed the five-week Practical AI Proficiency course, comprising approximately ten hours of structured study and applied project work.'+
     '<br><br>This certificate is issued on the basis of demonstrated completion. The holder has satisfied all twenty-five assessment criteria across the five modules, including the construction and testing of five practical projects using real data drawn from their own work.'+
     '<br><br>The final capstone required the design, construction and repeated end-to-end execution of a complete multi-step process, combining at least three distinct AI capabilities with explicit verification at each stage.</div>'+
@@ -1463,33 +1523,131 @@ function openCertificate(){
     '<div class="cert-comp-item">Structured output control &mdash; constrained formats, delimiters, persistent context, reasoning control</div>'+
     '<div class="cert-comp-item">Artifact construction &mdash; specification-led building and disciplined iteration of working tools</div>'+
     '<div class="cert-comp-item">External connections &mdash; connector configuration, permission judgement, and authoring reusable skills</div>'+
-    '<div class="cert-comp-item">Process design &mdash; decomposition, tool selection, verification design and durable documentation</div>'+
-    '</div>'+
+    '<div class="cert-comp-item">Process design &mdash; decomposition, tool selection, verification design and durable documentation</div></div>'+
+    '<div style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text-muted);line-height:1.7;text-align:left">'+
+    '<strong style="color:var(--text)">Verification.</strong> The authenticity of this certificate can be confirmed at <strong>'+location.host+'/verify</strong> using reference <strong style="font-family:monospace">'+c.ref+'</strong>. Verification confirms the holder, the issue date and the completion record held by the issuer.</div>'+
     '<div class="cert-foot">'+
     '<div class="cert-sig"><div class="cert-sig-line">JKLM</div>'+
     '<div class="cert-sig-name">JKLM Adult AI Curriculum</div>'+
     '<div class="cert-sig-title">Course Director</div></div>'+
-    '<div class="cert-meta">Issued '+dateStr+'<br>Reference '+ref+'<br>Five weeks &middot; 25 criteria &middot; 5 projects</div>'+
+    '<div class="cert-meta">Issued '+dt+'<br>Reference '+c.ref+'<br>Five weeks &middot; 25 criteria &middot; 5 projects</div>'+
     '</div></div></div></div>';
 }
-function hashCode(s){ let h=0; for(let i=0;i<s.length;i++){ h=((h<<5)-h)+s.charCodeAt(i); h|=0; } return h; }
+
+function openAccount(){
+  const main=document.getElementById('lesson');
+  document.getElementById('main').scrollTop=0;
+  const created=CU.createdAt?new Date(CU.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'—';
+  main.innerHTML='<div class="lesson-header"><div class="lesson-eyebrow">Account</div><div class="lesson-title">Your data and privacy</div>'+
+    '<div class="lesson-desc">Everything held about you, why it is held, and the controls you have over it.</div></div>'+
+    '<div class="lesson-body">'+
+    '<div class="block"><h3>Your account</h3>'+
+    '<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:15px"><span style="color:var(--text-muted)">Name</span><strong>'+CU.name+'</strong></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:15px"><span style="color:var(--text-muted)">Email</span><strong>'+CU.email+'</strong></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:15px"><span style="color:var(--text-muted)">Enrolled</span><strong>'+created+'</strong></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:11px 0;font-size:15px"><span style="color:var(--text-muted)">Progress</span><strong>'+metCount()+' of '+totalCriteria()+' criteria</strong></div></div>'+
+
+    '<div class="block"><h3>What is stored, and what is not</h3>'+
+    '<p>We keep the minimum needed to save your progress across devices and to issue a certificate that others can verify.</p>'+
+    '<h4>Stored</h4><ul>'+
+    '<li>Your name and email address</li>'+
+    '<li>Your password, hashed with scrypt &mdash; never stored in readable form</li>'+
+    '<li>Your recovery code, also hashed</li>'+
+    '<li>Which completion criteria you have ticked, and your quiz scores</li>'+
+    '<li>The text you write into exercises and projects &mdash; only if you leave the option below switched on</li>'+
+    '<li>When your account was created and last used</li></ul>'+
+    '<h4>Not stored, ever</h4><ul>'+
+    '<li>Payment details &mdash; the course is free and there is no payment system</li>'+
+    '<li>Analytics, tracking pixels, or advertising identifiers</li>'+
+    '<li>Anything shared with third parties &mdash; there are none</li></ul>'+
+    '<div class="warn"><strong>Worth knowing:</strong> the course asks you to use your own real work in the projects. If that work is commercially sensitive, switch off exercise storage below. Your criteria and certificate still work; only the written text stops being kept.</div></div>'+
+
+    '<div class="block"><h3>Storing your written work</h3>'+
+    '<p>With this on, your exercise and project text is saved to your account and follows you between devices. With it off, your writing stays only in the browser you typed it in and is erased from the server.</p>'+
+    '<label style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:15px">'+
+    '<input type="checkbox" id="acc-sync" '+(CU.syncNotes!==false?'checked':'')+' onchange="toggleNoteSync()" style="width:20px;height:20px;cursor:pointer">'+
+    '<span>Save my exercise and project writing to my account</span></label></div>'+
+
+    '<div class="block"><h3>How long data is kept</h3>'+
+    '<ul>'+
+    '<li><strong>While you are using the course</strong> &mdash; kept for as long as your account is active, so you can leave and return at any point without losing progress.</li>'+
+    '<li><strong>Sign-in sessions</strong> &mdash; expire after 90 days, after which you sign in again. Your progress is unaffected.</li>'+
+    '<li><strong>After 24 months without signing in</strong> &mdash; the account becomes eligible for deletion. Any certificate already issued stays valid and verifiable.</li>'+
+    '<li><strong>Issued certificates</strong> &mdash; the reference, name and issue date are kept indefinitely, because a certificate nobody can check is worthless.</li></ul></div>'+
+
+    '<div class="block"><h3>Your controls</h3>'+
+    '<p>Take a copy of everything held about you, or remove your account entirely. Both take effect immediately.</p>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">'+
+    '<button class="btn btn-primary" onclick="exportData()">Download all my data</button>'+
+    '<button class="btn btn-secondary" onclick="showDelete()" style="color:var(--red);border-color:#FECACA">Delete my account</button></div>'+
+    '<div id="del-box" style="display:none;margin-top:18px;padding:20px;background:var(--red-light);border:1.5px solid #FECACA;border-radius:10px">'+
+    '<h4 style="margin-top:0;color:var(--red)">Delete your account</h4>'+
+    '<p style="font-size:14px">This removes your name, email, progress and written work from our servers immediately. It cannot be undone.</p>'+
+    (CU.certificate?'<label style="display:flex;align-items:center;gap:10px;margin:14px 0;font-size:14px;cursor:pointer"><input type="checkbox" id="keep-cert" checked style="width:18px;height:18px"><span>Keep my certificate verifiable (recommended &mdash; only the reference, name and date are retained)</span></label>':'')+
+    '<div class="auth-input-group" style="margin-top:12px"><label>Confirm your password</label><input class="auth-input" type="password" id="del-pw" placeholder="Your password"></div>'+
+    '<div id="del-err" class="auth-error"></div>'+
+    '<button class="btn" style="background:var(--red);color:#fff" onclick="confirmDelete()">Permanently delete my account</button> '+
+    '<button class="btn btn-secondary" onclick="document.getElementById(\'del-box\').style.display=\'none\'">Cancel</button></div></div>'+
+
+    '<div class="block"><h3>Verifying your certificate</h3>'+
+    '<p>Certificates carry a reference number that anyone &mdash; an employer, a colleague &mdash; can check at <strong>'+location.host+'/verify</strong> without needing an account. Verification confirms the holder&rsquo;s name, the issue date and that all criteria were recorded as complete.</p>'+
+    (CU.certificate?'<div class="hl"><strong>Your reference:</strong> <span style="font-family:monospace">'+CU.certificate.ref+'</span><br><a href="/verify?ref='+encodeURIComponent(CU.certificate.ref)+'" target="_blank" style="color:var(--blue)">Check it yourself &rarr;</a></div>':'<p style="color:var(--text-muted)">You will receive a reference number once all criteria are complete.</p>')+
+    '</div></div>';
+}
+
+async function toggleNoteSync(){
+  CU.syncNotes=document.getElementById('acc-sync').checked;
+  if(!CU.syncNotes) CU.notes={};
+  await doSync();
+  toast('&#10003;',CU.syncNotes?'Your writing will be saved to your account':'Writing removed from server');
+}
+async function exportData(){
+  try{
+    const r=await fetch(API+'/export',{headers:{authorization:'Bearer '+LS.t}});
+    const blob=await r.blob();
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download='jklm-my-data.json'; a.click();
+    toast('&#128190;','Your data has been downloaded');
+  }catch{ toast('&#9888;','Download failed - please try again'); }
+}
+function showDelete(){ document.getElementById('del-box').style.display='block'; }
+async function confirmDelete(){
+  const pw=document.getElementById('del-pw').value;
+  const kc=document.getElementById('keep-cert');
+  const err=document.getElementById('del-err'); err.style.display='none';
+  try{
+    await api('delete',{method:'POST',body:JSON.stringify({password:pw,keepCertificate:kc?kc.checked:true})});
+    LS.clear(); CU=null;
+    document.body.innerHTML='<div style="max-width:520px;margin:100px auto;padding:40px;text-align:center;font-family:-apple-system,sans-serif">'+
+      '<div style="font-size:48px;margin-bottom:16px">&#128075;</div>'+
+      '<h1 style="font-size:24px;margin-bottom:12px">Your account has been deleted</h1>'+
+      '<p style="color:#4B5563;line-height:1.8">All personal data has been removed from our servers. Thank you for taking the course.</p>'+
+      '<p style="margin-top:24px"><a href="/" style="color:#2563EB">Return to the course</a></p></div>';
+  }catch(e){ err.textContent=e.message; err.style.display='block'; }
+}
 
 function toast(icon,msg){
   const t=document.getElementById('toast');
   document.getElementById('toast-icon').innerHTML=icon;
   document.getElementById('toast-msg').textContent=msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2600);
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  ['li-pass','rg-pass'].forEach(id=>{
+window.addEventListener('DOMContentLoaded',async()=>{
+  [['li-pass',doLogin],['rg-pass',doRegister],['rc-pass',doRecover]].forEach(([id,fn])=>{
     const el=document.getElementById(id);
-    if(el) el.addEventListener('keydown',ev=>{ if(ev.key==='Enter'){ id==='li-pass'?doLogin():doRegister(); } });
+    if(el) el.addEventListener('keydown',ev=>{ if(ev.key==='Enter') fn(); });
   });
-  const s=DB.session();
-  if(s) launch(s.email,s.name);
+  if(LS.t){
+    try{ const d=await api('me'); CU=d.user; LS.setCache(CU); launch(); }
+    catch(e){
+      const cached=LS.cache();
+      if(cached&&e.status!==401){ CU=cached; ONLINE=false; launch(); setSaveState('offline'); }
+      else { LS.clear(); showLogin(); }
+    }
+  }
 });
+window.addEventListener('beforeunload',()=>{ if(CU&&LS.t) navigator.sendBeacon&&doSync(); });
 
 </script>
 </body>
