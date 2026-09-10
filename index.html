@@ -257,7 +257,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
       <div class="auth-input-group"><label>Email</label><input class="auth-input" type="email" id="li-email" placeholder="you@example.com" autocomplete="email"></div>
       <div class="auth-input-group"><label>Password</label><input class="auth-input" type="password" id="li-pass" placeholder="Your password" autocomplete="current-password"></div>
       <button class="auth-btn" id="li-btn" onclick="doLogin()">Sign in</button>
-      <div class="auth-switch">New here? <a onclick="showRegister()">Create a free account</a> &middot; <a onclick="showRecover()">Lost your password?</a></div><div style="text-align:center;margin-top:12px"><a href="/privacy" target="_blank" style="font-size:12px;color:var(--text-dim);text-decoration:none">Privacy and data retention</a></div>
+      <div class="auth-switch">New here? <a onclick="showRegister()">Create a free account</a> &middot; <a onclick="showResetRequest()">Lost your password?</a></div><div style="text-align:center;margin-top:12px"><a href="/privacy" target="_blank" style="font-size:12px;color:var(--text-dim);text-decoration:none">Privacy and data retention</a></div>
     </div>
     <div id="view-register" style="display:none">
       <div class="auth-title">Start the course</div>
@@ -286,6 +286,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',sans-serif;
       <div class="auth-input-group"><label>New password</label><input class="auth-input" type="password" id="rc-pass" placeholder="At least 8 characters"></div>
       <button class="auth-btn" onclick="doRecover()">Reset password</button>
       <div class="auth-switch"><a onclick="showLogin()">Back to sign in</a></div>
+    </div>
+    <div id="view-request-reset" style="display:none">
+      <div class="auth-title">Email me a reset link</div>
+      <div class="auth-subtitle">Enter the address on your account and we will send you a link to choose a new password. The link works once and expires after an hour.</div>
+      <div id="rr-err" class="auth-error"></div>
+      <div class="auth-input-group"><label>Email</label><input class="auth-input" type="email" id="rr-email" placeholder="you@example.com"></div>
+      <button class="auth-btn" onclick="doRequestReset()">Send reset link</button>
+      <div id="rr-done" style="display:none;background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:6px;padding:12px 14px;font-size:13px;color:var(--green);margin-top:14px"></div>
+      <div class="auth-switch"><a onclick="showRecover()">Use a recovery code instead</a> &middot; <a onclick="showLogin()">Back to sign in</a></div>
+    </div>
+    <div id="view-newpass" style="display:none">
+      <div class="auth-title">Choose a new password</div>
+      <div class="auth-subtitle">Your reset link checked out. Set a new password and you will be signed straight in with all your progress intact.</div>
+      <div id="np-err" class="auth-error"></div>
+      <div class="auth-input-group"><label>New password (at least 8 characters)</label><input class="auth-input" type="password" id="np-pass" placeholder="Choose a password" autocomplete="new-password"></div>
+      <button class="auth-btn" onclick="doNewPassword()">Set password and sign in</button>
     </div>
     <div id="view-recovery-code" style="display:none">
       <div class="auth-title" id="rec-code-title">Save your recovery code</div>
@@ -1249,7 +1265,8 @@ function setSaveState(state, at){
 function showRegister(){ hideAll(); document.getElementById('view-register').style.display='block'; }
 function showLogin(){ hideAll(); document.getElementById('view-login').style.display='block'; }
 function showRecover(){ hideAll(); document.getElementById('view-recover').style.display='block'; }
-function hideAll(){ ['view-login','view-register','view-recover','view-recovery-code'].forEach(v=>{
+function showResetRequest(){ hideAll(); document.getElementById('view-request-reset').style.display='block'; }
+function hideAll(){ ['view-login','view-register','view-recover','view-recovery-code','view-request-reset','view-newpass'].forEach(v=>{
   const el=document.getElementById(v); if(el) el.style.display='none'; }); }
 
 function authErr(id,msg){ const e=document.getElementById(id); e.textContent=msg; e.style.display='block'; }
@@ -1551,6 +1568,12 @@ function openAccount(){
     '<div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:15px"><span style="color:var(--text-muted)">Enrolled</span><strong>'+created+'</strong></div>'+
     '<div style="display:flex;justify-content:space-between;padding:11px 0;font-size:15px"><span style="color:var(--text-muted)">Progress</span><strong>'+metCount()+' of '+totalCriteria()+' criteria</strong></div></div>'+
 
+    (CU.emailEnabled&&!CU.emailVerified?'<div class="block" style="border-color:var(--amber-mid);background:var(--amber-light)">'+
+      '<h3 style="color:var(--amber)">Confirm your email address</h3>'+
+      '<p>Your address has not been confirmed yet. Confirming it lets us send your certificate, warn you before a dormant account is removed, and reset your password by link rather than recovery code.</p>'+
+      '<button class="btn btn-primary" onclick="resendVerification()">Send me a confirmation email</button></div>':'')+
+    (CU.emailEnabled&&CU.emailVerified?'<div class="block" style="border-color:var(--green-mid);background:var(--green-light)">'+
+      '<h3 style="color:var(--green)">Email address confirmed</h3><p style="margin:0">We can reach you at '+CU.email+' about your certificate and account.</p></div>':'')+
     '<div class="block"><h3>What is stored, and what is not</h3>'+
     '<p>We keep the minimum needed to save your progress across devices and to issue a certificate that others can verify.</p>'+
     '<h4>Stored</h4><ul>'+
@@ -1593,7 +1616,7 @@ function openAccount(){
     '<button class="btn" style="background:var(--red);color:#fff" onclick="confirmDelete()">Permanently delete my account</button> '+
     '<button class="btn btn-secondary" onclick="document.getElementById(\'del-box\').style.display=\'none\'">Cancel</button></div></div>'+
 
-    '<div class="block"><h3>The full policy</h3><p>This page shows your own data and controls. The complete privacy and retention policy &mdash; including what is enforced automatically and your rights under UK and EU law &mdash; is published publicly.</p><a href="/privacy" target="_blank" class="btn btn-secondary" style="display:inline-block;text-decoration:none;margin-top:8px">Read the full policy</a></div>'+'<div class="block"><h3>Verifying your certificate</h3>'+
+    '<div class="block"><h3>Verifying your certificate</h3>'+
     '<p>Certificates carry a reference number that anyone &mdash; an employer, a colleague &mdash; can check at <strong>'+location.host+'/verify</strong> without needing an account. Verification confirms the holder&rsquo;s name, the issue date and that all criteria were recorded as complete.</p>'+
     (CU.certificate?'<div class="hl"><strong>Your reference:</strong> <span style="font-family:monospace">'+CU.certificate.ref+'</span><br><a href="/verify?ref='+encodeURIComponent(CU.certificate.ref)+'" target="_blank" style="color:var(--blue)">Check it yourself &rarr;</a></div>':'<p style="color:var(--text-muted)">You will receive a reference number once all criteria are complete.</p>')+
     '</div></div>';
@@ -1637,7 +1660,46 @@ function toast(icon,msg){
   t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800);
 }
 
+async function handleUrlParams(){
+  const q=new URLSearchParams(location.search);
+  const c=q.get('confirm');
+  if(c){ history.replaceState({},'',location.pathname);
+    setTimeout(()=>toast(c==='ok'?'&#10003;':'&#9888;',
+      c==='ok'?'Email address confirmed':'That confirmation link has expired'),900); }
+  const rt=q.get('reset');
+  if(rt){ history.replaceState({},'',location.pathname);
+    document.getElementById('auth-screen').style.display='flex';
+    hideAll();
+    document.getElementById('view-newpass').style.display='block';
+    window._resetToken=rt; return true; }
+  return false;
+}
+async function doNewPassword(){
+  const pw=document.getElementById('np-pass').value;
+  const err=document.getElementById('np-err'); err.style.display='none';
+  try{
+    const d=await api('complete-reset',{method:'POST',body:JSON.stringify({token:window._resetToken,password:pw})});
+    LS.t=d.token; CU=d.user; LS.setCache(CU); launch();
+    toast('&#10003;','Password updated - you are signed in');
+  }catch(e){ authErr('np-err', e.message); }
+}
+async function doRequestReset(){
+  const email=document.getElementById('rr-email').value.trim();
+  const err=document.getElementById('rr-err'); err.style.display='none';
+  const box=document.getElementById('rr-done');
+  try{
+    const d=await api('request-reset',{method:'POST',body:JSON.stringify({email})});
+    box.style.display='block'; box.textContent=d.message;
+  }catch(e){ authErr('rr-err', e.message); }
+}
+async function resendVerification(){
+  try{ const d=await api('resend-verification',{method:'POST'});
+    toast(d.ok?'&#9993;':'&#9888;', d.ok?'Confirmation email sent':'Could not send - try again shortly'); }
+  catch(e){ toast('&#9888;', e.message); }
+}
+
 window.addEventListener('DOMContentLoaded',async()=>{
+  if(await handleUrlParams()) return;
   [['li-pass',doLogin],['rg-pass',doRegister],['rc-pass',doRecover]].forEach(([id,fn])=>{
     const el=document.getElementById(id);
     if(el) el.addEventListener('keydown',ev=>{ if(ev.key==='Enter') fn(); });
