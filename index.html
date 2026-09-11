@@ -1221,6 +1221,14 @@ async function api(path, opts = {}) {
   return d;
 }
 
+const PROJ_FIELDS={w1:['p1-list','p1-one','p1-refine'],w2:['p2-prompt','p2-out','p2-fix'],
+ w3:['p3-spec','p3-iter','p3-learn'],w4:['p4-conn','p4-skill','p4-rev'],w5:['p5-prob','p5-built','p5-runs','p5-doc']};
+const MIN_CHARS={w1:400,w2:450,w3:450,w4:500,w5:700};
+const subs=()=>(CU&&CU.submissions)||{};
+const isSubmitted=w=>{const x=subs()[w];return !!(x&&x.submittedAt);};
+const countSubs=()=>Object.keys(PROJ_FIELDS).filter(isSubmitted).length;
+function evChars(w){return (PROJ_FIELDS[w]||[]).map(f=>(DB.notes()[f]||'')).join(' ').replace(/\s+/g,' ').trim().length;}
+
 const DB = {
   crit: () => (CU && CU.criteria) || {},
   notes: () => (CU && CU.notes) || {},
@@ -1351,8 +1359,7 @@ function allDone(){ return metCount()===totalCriteria(); }
 function updateStats(){
   const met=metCount(),tot=totalCriteria();
   const wd=WEEKS.filter(w=>weekDone(w.id)).length;
-  const n=DB.notes();
-  const pd=WEEKS.filter(w=>w.project.fields.every(x=>n[x.id]&&n[x.id].trim().length>15)).length;
+  const pd=countSubs();
   document.getElementById('s-weeks').textContent=wd+'/5';
   document.getElementById('s-crit').textContent=met+'/'+tot;
   document.getElementById('s-proj').textContent=pd+'/5';
@@ -1363,12 +1370,14 @@ function updateStats(){
   if(CU.certificate){ cl.classList.add('ready');
     document.getElementById('cert-link-title').textContent='Certificate issued';
     document.getElementById('cert-link-sub').textContent=CU.certificate.ref;
-  } else if(allDone()){ cl.classList.add('ready');
+  } else if(allDone()&&countSubs()===5){ cl.classList.add('ready');
     document.getElementById('cert-link-title').textContent='Certificate ready to claim';
     document.getElementById('cert-link-sub').textContent='All criteria met - click to issue';
   } else { cl.classList.remove('ready');
     document.getElementById('cert-link-title').textContent='Certificate locked';
-    document.getElementById('cert-link-sub').textContent=(tot-met)+' criteria remaining'; }
+    const rem2=(tot-met), ps=5-countSubs();
+    document.getElementById('cert-link-sub').textContent=
+      (rem2>0?rem2+' criteria':'')+(rem2>0&&ps>0?', ':'')+(ps>0?ps+' projects':'')+' remaining'; }
 }
 
 function buildSidebar(){
@@ -1409,7 +1418,8 @@ function render(){
     '<div class="spec"><h4>What to do</h4><ol style="margin:0">'+p.spec.map(s=>'<li>'+s+'</li>').join('')+'</ol></div>'+
     '<div class="hl"><strong>Guidance:</strong> '+p.guide+'</div>'+
     p.fields.map(f=>'<div style="margin-top:16px"><label style="display:block;font-size:14px;font-weight:600;margin-bottom:7px">'+f.label+'</label>'+
-      '<textarea class="ex-input" style="min-height:'+f.h+'px" id="'+f.id+'" placeholder="'+f.ph.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')+'" oninput="saveNote(\''+f.id+'\')">'+(n[f.id]||'')+'</textarea></div>').join('')+
+      '<textarea class="ex-input" style="min-height:'+f.h+'px" id="'+f.id+'" placeholder="'+f.ph.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')+'" '+(isSubmitted(w.id)?'readonly style="min-height:'+f.h+'px;background:var(--bg);color:var(--text-muted);cursor:not-allowed"':'oninput="saveNote(\''+f.id+'\')"')+'>'+(n[f.id]||'')+'</textarea></div>').join('')+
+    submitPanel(w)+
     '</div></div>');
   panes.push('<div id="quizbox"></div>');
   panes.push('<div class="block"><h3>Completion criteria</h3><p>Tick each item you have genuinely completed. These are recorded against your account and are what your certificate is issued on. Nobody else checks them &mdash; which is precisely why honesty here is the whole point.</p></div>'+
@@ -1422,6 +1432,50 @@ function render(){
     '<div class="lesson-tabs">'+w.tabs.map((t,i)=>'<div class="lesson-tab '+(i===0?'active':'')+'" onclick="switchTab('+i+')">'+t+'</div>').join('')+'</div>'+
     '<div class="lesson-body">'+panes.map((pn,i)=>'<div class="tab-content '+(i===0?'active':'')+'" id="pane-'+i+'">'+pn+'</div>').join('')+'</div>';
   renderQuiz(w);
+}
+
+function submitPanel(w){
+  const sb=subs()[w.id];
+  if(isSubmitted(w.id)){
+    const d=new Date(sb.submittedAt).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    return '<div style="margin-top:20px;background:var(--green-light);border:1.5px solid var(--green-mid);border-radius:var(--radius-md);padding:18px 20px">'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="font-size:20px">&#10003;</span>'+
+      '<strong style="color:var(--green);font-size:16px">Project submitted</strong></div>'+
+      '<p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin:0 0 12px">Submitted on '+d+' &middot; '+sb.chars+' characters of evidence recorded'+
+      (sb.revisions?' &middot; revised '+sb.revisions+(sb.revisions===1?' time':' times'):'')+
+      '. This is now part of the record your certificate is issued against.</p>'+
+      (CU.certificate?'<p style="font-size:13px;color:var(--text-dim);margin:0">Locked &mdash; projects cannot be changed once a certificate has been issued.</p>':
+      '<button class="btn btn-secondary" onclick="unlockProject(\''+w.id+'\')">Unlock to revise</button>')+'</div>';
+  }
+  const need=MIN_CHARS[w.id]||400, have=evChars(w.id);
+  const ready=have>=need&&(PROJ_FIELDS[w.id]||[]).every(f=>(DB.notes()[f]||'').trim().length>10);
+  return '<div style="margin-top:20px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-md);padding:18px 20px">'+
+    '<strong style="font-size:15px">Submit this project</strong>'+
+    '<p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin:8px 0 12px">Submitting records your write-up as evidence and locks it. All five projects must be submitted before a certificate can be issued &mdash; this is what makes the certificate mean something beyond ticked boxes.</p>'+
+    '<div style="font-size:13px;color:'+(ready?'var(--green)':'var(--text-muted)')+';margin-bottom:12px">'+
+    (ready?'&#10003; Ready to submit':'Write-up length: '+have+' of '+need+' characters minimum, all parts need an answer')+'</div>'+
+    '<button class="btn '+(ready?'btn-primary':'btn-secondary')+'" onclick="submitProject(\''+w.id+'\')">Submit project</button> '+
+    '<button class="btn btn-secondary" onclick="saveProject()">Save draft</button>'+
+    '<div class="ex-result" id="sub-r-'+w.id+'"></div></div>';
+}
+async function submitProject(wid){
+  const w=WEEKS.find(x=>x.id===wid);
+  w.project.fields.forEach(f=>saveNote(f.id));
+  const r=document.getElementById('sub-r-'+wid);
+  try{
+    const d=await api('submit-project',{method:'POST',body:JSON.stringify({week:wid,notes:CU.notes||{}})});
+    if(!CU.submissions)CU.submissions={};
+    CU.submissions[wid]=d.submission; LS.setCache(CU);
+    toast('&#10003;','Project '+w.num+' submitted ('+d.totalSubmitted+' of 5)');
+    updateStats(); render();
+  }catch(e){ r.className='ex-result hint'; r.textContent=e.message; }
+}
+async function unlockProject(wid){
+  try{
+    const d=await api('unlock-project',{method:'POST',body:JSON.stringify({week:wid})});
+    CU.submissions[wid]=d.submission; LS.setCache(CU);
+    toast('&#128275;','Unlocked - revise and submit again'); updateStats(); render();
+  }catch(e){ toast('&#9888;',e.message); }
 }
 
 function doneCard(w){
@@ -1498,16 +1552,24 @@ function renderQuiz(w){
 async function openCertificate(){
   const main=document.getElementById('lesson');
   document.getElementById('main').scrollTop=0;
-  if(!allDone()&&!CU.certificate){
+  if((!allDone()||countSubs()<5)&&!CU.certificate){
     const rem=totalCriteria()-metCount();
+    const psub=countSubs();
     main.innerHTML='<div class="lesson-body"><div class="cert-page"><div class="cert-locked">'+
       '<div style="font-size:52px;margin-bottom:16px">&#128274;</div>'+
       '<div style="font-size:24px;font-weight:800;margin-bottom:10px">Certificate not yet available</div>'+
-      '<p style="color:var(--text-muted);font-size:15px;line-height:1.8;max-width:520px;margin:0 auto 22px">You have '+rem+' completion criteria still to meet. Certificates are issued against a server-side record of completed work, not attendance &mdash; which is what makes them verifiable by anyone.</p>'+
+      '<p style="color:var(--text-muted);font-size:15px;line-height:1.8;max-width:520px;margin:0 auto 22px">'+
+      (rem>0?'You have '+rem+' completion criteria still to meet. ':'All criteria met. ')+
+      (psub<5?'You have submitted '+psub+' of 5 projects &mdash; all five must be submitted as evidence before a certificate is issued.':'')+
+      '</p>'+
       '<div style="max-width:460px;margin:0 auto;text-align:left">'+WEEKS.map(w=>{
         const m=weekMet(w.id),t=w.criteria.length;
+        const sub=isSubmitted(w.id);
         return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px">'+
-          '<span>Week '+w.num+' &mdash; '+w.name+'</span><span style="font-weight:700;color:'+(m===t?'var(--green)':'var(--text-dim)')+'">'+m+'/'+t+'</span></div>';
+          '<span>Week '+w.num+' &mdash; '+w.name+'</span><span style="font-weight:700">'+
+          '<span style="color:'+(m===t?'var(--green)':'var(--text-dim)')+'">'+m+'/'+t+'</span>'+
+          '<span style="color:var(--border-strong);margin:0 6px">|</span>'+
+          '<span style="color:'+(sub?'var(--green)':'var(--text-dim)')+'" title="Project submitted">'+(sub?'&#10003; project':'no project')+'</span></span></div>';
       }).join('')+'</div></div></div></div>';
     return;
   }
@@ -1545,6 +1607,11 @@ async function openCertificate(){
     '<div class="cert-comp-item">Artifact construction &mdash; specification-led building and disciplined iteration of working tools</div>'+
     '<div class="cert-comp-item">External connections &mdash; connector configuration, permission judgement, and authoring reusable skills</div>'+
     '<div class="cert-comp-item">Process design &mdash; decomposition, tool selection, verification design and durable documentation</div></div>'+
+    '<div class="cert-comp" style="background:var(--green-light);border-color:var(--green-mid)"><h4 style="color:var(--green)">Evidence on record</h4>'+
+    '<div class="cert-comp-item">Five project write-ups submitted and timestamped, each locked at submission</div>'+
+    '<div class="cert-comp-item">Twenty-five assessment criteria recorded complete against a server-side record</div>'+
+    (c.emailVerified?'<div class="cert-comp-item">Email address confirmed by the holder</div>':'')+
+    '</div>'+
     '<div style="background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text-muted);line-height:1.7;text-align:left">'+
     '<strong style="color:var(--text)">Verification.</strong> The authenticity of this certificate can be confirmed at <strong>'+location.host+'/verify</strong> using reference <strong style="font-family:monospace">'+c.ref+'</strong>. Verification confirms the holder, the issue date and the completion record held by the issuer.</div>'+
     '<div class="cert-foot">'+
@@ -1666,6 +1733,13 @@ async function handleUrlParams(){
   if(c){ history.replaceState({},'',location.pathname);
     setTimeout(()=>toast(c==='ok'?'&#10003;':'&#9888;',
       c==='ok'?'Email address confirmed':'That confirmation link has expired'),900); }
+  const ot=q.get('token');
+  if(ot){ LS.t=ot; history.replaceState({},'',location.pathname);
+    try{ const d=await api('me'); CU=d.user; LS.setCache(CU); launch();
+      toast('&#10003;','Signed in'); return true; }catch{ LS.clear(); } }
+  const om=q.get('oauth');
+  if(om){ history.replaceState({},'',location.pathname);
+    setTimeout(()=>toast('&#9888;', om==='noemail'?'That account did not share an email address':'Sign-in did not complete - please try again'),800); }
   const rt=q.get('reset');
   if(rt){ history.replaceState({},'',location.pathname);
     document.getElementById('auth-screen').style.display='flex';
@@ -1698,7 +1772,27 @@ async function resendVerification(){
   catch(e){ toast('&#9888;', e.message); }
 }
 
+async function initOAuth(){
+  try{
+    const p=await api('oauth/providers');
+    if(!p.google&&!p.linkedin) return;
+    const html='<div style="display:flex;align-items:center;gap:12px;margin:18px 0 14px;color:var(--text-dim);font-size:12px">'+
+      '<div style="flex:1;height:1px;background:var(--border)"></div>OR<div style="flex:1;height:1px;background:var(--border)"></div></div>'+
+      (p.google?'<a href="/api/oauth/start/google" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:11px;border:1.5px solid var(--border-strong);border-radius:6px;text-decoration:none;color:var(--text);font-size:14px;font-weight:600;margin-bottom:9px;background:var(--white)">'+
+      '<svg width="17" height="17" viewBox="0 0 48 48"><path fill="#4285F4" d="M45 24c0-1.6-.1-2.7-.4-4H24v7.5h12c-.2 2-1.6 5-4.6 7l7 5.4C42.6 36 45 30.6 45 24z"/><path fill="#34A853" d="M24 46c6.2 0 11.4-2 15.2-5.6l-7-5.4c-2 1.3-4.6 2.2-8.2 2.2-6.2 0-11.5-4.1-13.4-9.8l-7.3 5.6C7.1 40.9 15 46 24 46z"/><path fill="#FBBC05" d="M10.6 27.4c-.5-1.4-.8-3-.8-4.4s.3-3 .8-4.4l-7.3-5.7C1.8 16 1 19.9 1 23s.8 7 2.3 10.1l7.3-5.7z"/><path fill="#EA4335" d="M24 9.5c3.5 0 5.9 1.5 7.2 2.8l5.3-5.2C33.3 4 29.2 2 24 2 15 2 7.1 7.1 3.3 14.9l7.3 5.7C12.5 13.6 17.8 9.5 24 9.5z"/></svg>Continue with Google</a>':'')+
+      (p.linkedin?'<a href="/api/oauth/start/linkedin" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:11px;border:1.5px solid var(--border-strong);border-radius:6px;text-decoration:none;color:var(--text);font-size:14px;font-weight:600;background:var(--white)">'+
+      '<svg width="17" height="17" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.4 20.4h-3.6v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9v5.7H9.4V9h3.4v1.6h.1c.5-.9 1.6-1.9 3.4-1.9 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 110-4.2 2.1 2.1 0 010 4.2zM7.1 20.4H3.5V9h3.6v11.4zM22.2 0H1.8C.8 0 0 .8 0 1.7v20.6c0 .9.8 1.7 1.8 1.7h20.4c1 0 1.8-.8 1.8-1.7V1.7c0-.9-.8-1.7-1.8-1.7z"/></svg>Continue with LinkedIn</a>':'')+
+      '<div style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:10px;line-height:1.6">Signing in this way confirms your email automatically and links your certificate to a named profile.</div>';
+    ['view-login','view-register'].forEach(v=>{
+      const el=document.getElementById(v);
+      const sw=el.querySelector('.auth-switch');
+      if(sw) sw.insertAdjacentHTML('beforebegin',html);
+    });
+  }catch{}
+}
+
 window.addEventListener('DOMContentLoaded',async()=>{
+  initOAuth();
   if(await handleUrlParams()) return;
   [['li-pass',doLogin],['rg-pass',doRegister],['rc-pass',doRecover]].forEach(([id,fn])=>{
     const el=document.getElementById(id);

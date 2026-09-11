@@ -52,6 +52,23 @@ button:hover{background:var(--blue-dark)}
   <div class="foot">Issued by JKLM Adult AI Curriculum<br><a href="/">Return to the course</a></div>
 </div>
 <script>
+function idLabel(m){
+  if(m==='google') return 'Google account';
+  if(m==='linkedin') return 'LinkedIn account';
+  return 'Self-asserted name';
+}
+function evidenceBlock(ev){
+  const names={w1:'Prompt library',w2:'Document processor',w3:'Interactive tool',w4:'Working skill',w5:'Capstone process'};
+  const rows=Object.keys(names).map(function(k){
+    const e=ev[k]; if(!e) return '';
+    const d=e.submittedAt?new Date(e.submittedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
+    return '<div style="display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:13px">'+
+      '<span style="color:var(--muted)">'+esc(names[k])+'</span>'+
+      '<span style="font-weight:600;text-align:right">'+esc(d)+' <span style="color:var(--dim);font-weight:400">&middot; '+esc(String(e.chars||0))+' chars'+(e.revisions?' &middot; rev '+esc(String(e.revisions)):'')+'</span></span></div>';
+  }).join('');
+  return '<div style="margin-top:18px;padding:16px 18px;background:rgba(255,255,255,.7);border:1px solid var(--green-mid);border-radius:10px">'+
+    '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:8px">Submitted evidence</div>'+rows+'</div>';
+}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function check(){
   const ref=document.getElementById('ref').value.trim().toUpperCase();
@@ -74,8 +91,13 @@ async function check(){
       '<div class="row"><span class="k">Issued by</span><span class="v">'+esc(d.issuer)+'</span></div>'+
       '<div class="row"><span class="k">Date issued</span><span class="v">'+esc(dt)+'</span></div>'+
       '<div class="row"><span class="k">Assessment criteria</span><span class="v">'+esc(d.criteriaMet)+' met</span></div>'+
+      '<div class="row"><span class="k">Projects submitted</span><span class="v">'+esc(d.projectsSubmitted||'not recorded')+'</span></div>'+
+      '<div class="row"><span class="k">Email confirmed</span><span class="v">'+(d.emailVerified?'Yes':'Not confirmed')+'</span></div>'+
+      '<div class="row"><span class="k">Identity</span><span class="v">'+esc(idLabel(d.identityMethod))+'</span></div>'+
       '<div class="row"><span class="k">Reference</span><span class="v" style="font-family:monospace">'+esc(d.reference)+'</span></div>'+
-      '<div class="note">This certificate was issued against a server-side record confirming all assessment criteria were completed. Course duration was five weeks of structured study with five practical projects built using the holder&rsquo;s own real work.</div></div>';
+      (d.evidence?evidenceBlock(d.evidence):'')+
+      '<div class="note"><strong>What this confirms.</strong> All twenty-five assessment criteria were recorded complete against our server, and five project write-ups were submitted and timestamped as evidence. Each project was locked at the moment of submission.<br><br>'+
+      '<strong>What it does not confirm.</strong> Completion criteria are self-attested by the learner, and the projects were not individually reviewed by an assessor. This certifies recorded completion of the programme, not examined competence.</div></div>';
   }catch(e){
     box.innerHTML='<div class="bad"><strong>Could not reach the verification service.</strong><div style="font-size:14px;color:var(--muted);margin-top:8px">Please try again shortly.</div></div>';
   }
