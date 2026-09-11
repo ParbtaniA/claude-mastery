@@ -42,7 +42,7 @@ td strong{color:var(--text)}
 <div class="sp"></div><a href="/">The course</a><a href="/verify">Verify a certificate</a></div>
 <div class="wrap">
 <h1>Privacy and data retention</h1>
-<div class="upd">In effect from September 2026 &middot; Plain English, no legal padding</div>
+<div class="upd">Updated September 2026 &middot; Plain English, no legal padding</div>
 
 <p>This course is free, carries no advertising, and has no commercial interest in your data. We collect the minimum needed to save your progress and to issue a certificate that other people can verify. This page explains exactly what that means.</p>
 
@@ -58,21 +58,60 @@ td strong{color:var(--text)}
 <tr><td><strong>Email address</strong></td><td>Identifies your account so you can sign back in</td><td>Required</td></tr>
 <tr><td><strong>Password</strong></td><td>Hashed with scrypt and a unique salt. We never hold it in readable form and cannot recover it for you</td><td>Required</td></tr>
 <tr><td><strong>Recovery code</strong></td><td>Also hashed. The only way back in if you forget your password, since we send no email</td><td>Required</td></tr>
-<tr><td><strong>Completion criteria</strong></td><td>Records your progress and is what a certificate is issued against</td><td>Required</td></tr>
+<tr><td><strong>Completion criteria</strong></td><td>Records your progress and is part of what a certificate is issued against</td><td>Required</td></tr>
+<tr><td><strong>Project submissions</strong></td><td>When you submit each of the five projects we record the date, the length of your write-up and a one-way fingerprint of it. This is the evidence behind your certificate</td><td>Required to earn a certificate</td></tr>
 <tr><td><strong>Quiz scores</strong></td><td>Shown back to you; not used for anything else</td><td>Required</td></tr>
 <tr><td><strong>Exercise and project writing</strong></td><td>Lets your written work follow you between devices</td><td><strong>Optional &mdash; can be switched off</strong></td></tr>
 <tr><td><strong>Account created and last used dates</strong></td><td>Drives the retention schedule below</td><td>Required</td></tr>
 </table>
 
-<div class="box amber"><strong>Worth reading before you start.</strong> Every project in this course asks you to use your own real work rather than invented examples &mdash; that is what makes the course useful. If your work is commercially sensitive or covered by a confidentiality agreement, switch off <em>&ldquo;save my exercise and project writing&rdquo;</em> at signup or later in your account. Your progress and certificate work exactly the same; only the written text stops being stored on our servers.</div>
+<div class="box amber"><strong>Worth reading before you start.</strong> Every project in this course asks you to use your own real work rather than invented examples &mdash; that is what makes the course useful. If your work is commercially sensitive or covered by a confidentiality agreement, switch off <em>&ldquo;save my exercise and project writing&rdquo;</em> at signup or later in your account. Your progress and certificate work exactly the same; only the written text stops being stored on our servers. Project submission still works, because the fingerprint we keep is a one-way hash — it records that a write-up of a given length existed at a given moment without us holding the words.</div>
 
 <h2>What we never collect</h2>
 <ul>
 <li>Payment details of any kind. The course is free and there is no payment system to collect them with.</li>
 <li>Analytics, tracking pixels, advertising identifiers or third-party scripts.</li>
 <li>A history of your IP addresses or device fingerprints.</li>
-<li>Anything at all is shared, sold or passed to a third party. There are no third parties.</li>
+<li>Nothing is ever sold, rented, or shared for marketing. We do use a small number of service providers to run the course — they are named in full below and act only on our instructions.</li>
 </ul>
+
+<h2>Service providers who process data for us</h2>
+<p>We are a small operation and do not run our own servers. A handful of providers process data on our behalf, under contract, solely to deliver the course. None of them may use your data for their own purposes.</p>
+<table>
+<tr><th style="width:24%">Provider</th><th style="width:30%">What they handle</th><th>Where and why</th></tr>
+<tr><td><strong>Netlify</strong><br><span style="font-size:12.5px;color:#9CA3AF">Active now</span></td><td>Hosting and the database holding your account, progress and written work</td><td>United States. This is where the course runs and where your data is stored at rest.</td></tr>
+<tr><td><strong>Resend</strong><br><span style="font-size:12.5px;color:#9CA3AF">When email is enabled</span></td><td>Delivering email: confirmation, password resets, your certificate, dormancy warnings</td><td>United States. Receives your email address and name in order to send the message. Does not receive your progress or written work.</td></tr>
+<tr><td><strong>Google</strong><br><span style="font-size:12.5px;color:#9CA3AF">Only if you use Google sign-in</span></td><td>Confirming you control a Google account</td><td>Only involved if you choose that sign-in method. See below.</td></tr>
+<tr><td><strong>LinkedIn</strong><br><span style="font-size:12.5px;color:#9CA3AF">Only if you use LinkedIn sign-in</span></td><td>Confirming you control a LinkedIn account</td><td>Only involved if you choose that sign-in method. See below.</td></tr>
+</table>
+<p style="font-size:14px">If we add or change a provider, this table is updated and the date at the top of the page changes.</p>
+
+<h2 id="oauth">Signing in with Google or LinkedIn</h2>
+<p>You may create your account with an email and password, or by using an existing Google or LinkedIn account. Both routes give you the same course; the choice is entirely yours and neither is required.</p>
+
+<h3>What we receive if you use it</h3>
+<ul>
+<li>Your name as it appears on that account</li>
+<li>Your email address</li>
+<li>Whether the provider has confirmed that email address</li>
+<li>A provider account identifier, so we can recognise you when you return</li>
+</ul>
+<p>That is the whole list. We request the minimum scope available — sign-in and basic profile only.</p>
+
+<h3>What we never receive</h3>
+<ul>
+<li>Your password for that account. It is never shown to us and we could not see it if we tried.</li>
+<li>Your contacts, connections, files, calendar, messages or posts.</li>
+<li>Permission to act on that account. We cannot post, send, or change anything on your behalf.</li>
+</ul>
+
+<h3>What the provider learns about you</h3>
+<p>Google or LinkedIn will know that you signed in to JKLM Adult AI Curriculum, and when. They do not receive your progress, your quiz results, your written work, or whether you completed the course. If you would rather they knew nothing at all, use email and password instead.</p>
+
+<div class="box blue"><strong>Why we offer it.</strong> A name taken from a signed-in Google or LinkedIn profile carries a little more weight than a name typed into a box, so certificates issued that way note the sign-in method used. It also confirms your email automatically, which means we can reach you about your certificate without a separate confirmation step.</div>
+
+<h3>Disconnecting</h3>
+<p>You can revoke our access at any time from your Google or LinkedIn account settings — neither of us needs the other's permission. Doing so does not delete your JKLM account or your progress; it means you sign in with a password instead. If you have never set one, use the recovery code you were given at signup, or ask for a reset link.</p>
 
 <h2>How long we keep it</h2>
 <table>
@@ -112,7 +151,8 @@ td strong{color:var(--text)}
 <div class="box amber"><strong>An honest limitation.</strong> This course sends no email. That means we cannot verify that an email address genuinely belongs to you, and we cannot contact you if something goes wrong. It also means your recovery code is the sole route back into your account &mdash; lose it and your progress cannot be recovered by us or by anyone.</div>
 
 <h2>If you are in the UK or EU</h2>
-<p>Our lawful basis for holding your account data is <strong>performance of a contract</strong> &mdash; you asked us to run a course for you and save your progress. Storing your written work is separate and rests on <strong>consent</strong>, which is why it is a switch you control and can withdraw at any time without losing anything else.</p>
+<p>Our lawful basis for holding your account data is <strong>performance of a contract</strong> &mdash; you asked us to run a course for you and save your progress. Storing your written work is separate and rests on <strong>consent</strong>, which is why it is a switch you control and can withdraw at any time without losing anything else. Using Google or LinkedIn to sign in also rests on <strong>consent</strong>, given at the moment you choose that option rather than entering a password.</p>
+<p>Our providers in the table above are processors acting under contract. Netlify and Resend are based in the United States; transfers rely on their standard contractual clauses. We hold no special category data &mdash; no health information, no biometrics, no identity documents &mdash; and we have no plans to collect any.</p>
 <p>You have the right to access, correct, export, restrict or erase your data. Access, export and erasure are available immediately from your account page without needing to ask. For correction or any other request, email <strong>ayaz@venzaura.com</strong>.</p>
 
 <h2>Changes to this policy</h2>
